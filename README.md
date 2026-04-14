@@ -1,92 +1,211 @@
-# Prox Founding Engineer Challenge
+# Vulcan OmniPro 220 — Technical Support Agent
 
-<img src="product.webp" alt="Vulcan OmniPro 220" width="400" /> <img src="product-inside.webp" alt="Vulcan OmniPro 220 — inside panel" width="400" />
+A multimodal technical support agent for the **Vulcan OmniPro 220** multiprocess welder. Ask it anything — duty cycle calculations, polarity setup, wire feed settings, troubleshooting — and it responds with precise answers, interactive HTML artifacts, and highlighted manual images. Upload a photo of your weld bead or machine screen for visual diagnosis.
 
-## The Product
-
-The [Vulcan OmniPro 220](https://www.harborfreight.com/omnipro-220-industrial-multiprocess-welder-with-120240v-input-57812.html) is a multiprocess welding system sold by Harbor Freight. It supports four welding processes (MIG, Flux-Cored, TIG, and Stick), runs on both 120V and 240V input, and has an LCD-based synergic control system.
-
-Its owner's manual is 48 pages of dense technical content. Duty cycle matrices across multiple voltages and amperages, polarity setup procedures that differ per welding process, wire feed mechanisms with specific tensioner calibrations, wiring schematics, troubleshooting matrices, weld diagnosis diagrams, and a full parts list.
-
-This is exactly the kind of product Prox exists for. Nobody knows how to use this machine straight out of the box but has time to read 48 page manual, but a complicated machine needs expert-level support.
-
-Additional video: https://www.youtube.com/watch?v=kxGDoGcnhBw
-
-## Your Job
-
-Build a multimodal reasoning agent for the Vulcan OmniPro 220 using the Claude Agent SDK. The agent must be able to answer deep technical questions about this product accurately, helpfully, and not just in text.
-
-The manuals are in the `files/` directory.
-
-**There is no limit to how far you can go.** You can integrate voice. You can build a full interactive experience. Sky is the limit. The more ambitious and polished, the better.
-
-## What We're Testing
-
-### 1. Deep Technical Accuracy
-
-Your agent needs to answer questions like these correctly:
-
-- "What's the duty cycle for MIG welding at 200A on 240V?"
-- "I'm getting porosity in my flux-cored welds. What should I check?"
-- "What polarity setup do I need for TIG welding? Which socket does the ground clamp go in?"
-
-We will test with questions that require cross-referencing multiple manual sections, understanding visual content (diagrams, schematics, charts), and handling ambiguous questions that need clarification from the user.
-
-### 2. Multimodal Responses
-
-This is the most important part. Your agent must not be text-only.
-
-- If someone asks about polarity setup, the agent should draw or show a diagram of which cable goes in which socket, not just describe it.
-- If the answer relates to a specific image in the manual (the wire feed mechanism, the front panel controls, the weld diagnosis examples), the agent should surface that image.
-- If a question is complex enough, the agent should generate interactive content: a duty cycle calculator, a troubleshooting flowchart, a settings configurator that takes process + material + thickness and outputs recommended wire speed and voltage.
-
-When something is too cognitively hard to explain in words, the agent should draw it. Real-time diagrams, interactive schematics, visual walkthroughs generated through code.
-
-For your agent to handle these responses well you need to reverse engineer Claude artifacts. Here are two places where you can start:
-- https://claude.ai/artifacts (see how Claude renders interactive artifacts in chat)
-- https://www.reidbarber.com/blog/reverse-engineering-claude-artifacts
-
-### 3. Tone and Helpfulness
-
-Imagine your user just bought this welder and is standing in their garage trying to set it up. They're not an idiot, but they're not a professional welder either.
-
-### 4. Knowledge Extraction Quality
-
-The manual has a mix of text, tables, labeled diagrams, schematics, and decision matrices. Some critical information exists only in images (the welding process selection chart, the weld diagnosis photos, the wiring schematic). We want to see that your agent understands and presents the visual content, not just the text.
-
-## Tech Requirements
-
-- Use the [Anthropic Claude Agent SDK](https://docs.anthropic.com) as the foundation for your agent.
-- The project must run locally with a single API key provided via `.env`.
-- You are responsible for your own API costs during development.
-
-## How to Present Your Work
-
-**This matters.** Your submission is not just the code — it's how you present it.
-
-- **Build a frontend.** The best way for us to evaluate your agent is if it has a clean, simple UI we can run immediately. This is realistically the only way to properly demo an agent like this.
-- **Hosting is a plus.** If you host it somewhere we can access without cloning, that's a strong signal. Not required, but it removes friction and shows initiative.
-- **Write a clear README.** Explain how your agent works, what design decisions you made, how knowledge is extracted and represented, and how to run it. Your documentation will be evaluated — we want to see how you think and communicate, not just how you code.
-- **Video walkthrough is a huge plus.** Record yourself demoing the agent and explaining your approach. Walk through the hard questions, show how it handles multimodal responses, explain your architecture. This gives us a much richer picture of your work than code alone.
-
-We should be running your agent within 2 minutes of cloning your repo:
+## Quick Start (clone and run)
 
 ```bash
-git clone <your-fork>
-cd <your-fork>
-cp .env.example .env   # we plug in our own Anthropic API key
-# your install command (npm install, uv install, etc.)
-# your run command (npm run dev, python app.py, etc.)
+git clone <repo>
+cd prox-challenge
+
+# 1 — Set your Anthropic key (only credential required to run)
+cp .env.example .env
+# Edit .env: set ANTHROPIC_API_KEY=sk-ant-...
+
+# 2 — Install Python dependencies
+pip install -r requirements.txt
+# (sentence-transformers model ~80MB, downloads on first run)
+
+# 3 — Start the backend (chroma_db/ ships pre-built — no ingestion needed)
+uvicorn main:app --reload --port 8080
+
+# 4 — Start the frontend
+cd frontend && npm install && npm run dev
+# → http://localhost:5173
 ```
 
-If it takes longer than that to set up, that's a problem.
+> No Google Cloud credentials required to run the agent. GCP is only needed if you want to **re-ingest** the PDFs from scratch.
 
-## What to Submit
+---
 
-1. Fork this repo.
-2. Build your solution.
-3. Submit your fork URL through the form at [useprox.com/join/challenge](https://useprox.com/join/challenge).
+## Architecture
 
-## What Happens Next
+```
+PDF manuals (files/)
+      │
+      ▼
+ ingest.py  (Gemini 2.5 Flash vision + structured extraction)
+                  │ Vertex text-embedding-004 (ingestion only)
+                  ▼
+            chroma_db/   ← shipped in repo (all-MiniLM-L6-v2 embeddings)
+                  │
+                  ▼
+ agent.py   (Anthropic tool_use agentic loop)
+            ├─ Haiku  — agentic loop + text answers
+            └─ Sonnet — interactive HTML artifact generation
+                  │
+                  ▼
+ main.py    (FastAPI + Server-Sent Events streaming)
+                  │
+                  ▼
+ frontend/  (React + Vite — two-panel chat + artifact viewer)
+```
 
-We review submissions on a rolling basis and respond to every single one within a few days. Good luck.
+---
+
+## Agent Architecture — Claude's tool_use Agentic Loop
+
+This agent is built on **Claude's native `tool_use` mechanism** — the actual agentic primitive provided by Anthropic. There is no separate "Agent SDK" package; the agentic loop *is* the `tool_use` pattern.
+
+### The canonical agentic loop (from [Anthropic's documentation](https://docs.anthropic.com/en/docs/build-with-claude/tool-use))
+
+```python
+response = client.messages.create(model=..., tools=tools, messages=messages)
+
+while response.stop_reason == "tool_use":
+    # Extract tool call(s) from the response
+    # Execute each tool locally
+    # Append tool_result(s) back into messages
+    response = client.messages.create(...)  # next iteration
+# stop_reason == "end_turn" → final answer
+```
+
+Our `SupportAgent.ask_streaming()` implements exactly this pattern:
+
+1. **Initial call** — Claude sees the user's question (and optional image) plus tool definitions
+2. **Tool loop** — while `stop_reason == "tool_use"`, execute tools and feed results back
+3. **Streaming synthesis** — after `end_turn`, stream Claude's final answer via `messages.stream()` so tokens arrive live
+
+### Tools defined
+
+| Tool | What it does |
+|------|-------------|
+| `search_knowledge` | Vector search over ingested manual chunks (ChromaDB + all-MiniLM-L6-v2) |
+| `get_manual_image` | Fetches rendered manual page PNG URL + optional highlight bbox |
+| `render_artifact` | Calls Sonnet to generate self-contained interactive HTML |
+
+### Model assignments
+
+| Role | Model | Credentials |
+|------|-------|-------------|
+| Agentic loop + text answers | Claude Haiku 4.5 (direct Anthropic API) | `ANTHROPIC_API_KEY` |
+| HTML artifact generation | Claude Sonnet 4.5 (direct Anthropic API) | `ANTHROPIC_API_KEY` |
+| PDF ingestion vision + structured extraction | Gemini 2.5 Flash (Vertex AI) | GCP only for ingestion |
+| Ingestion embeddings | `text-embedding-004` (Vertex AI) | GCP only for ingestion |
+| **Query-time embeddings** | **`all-MiniLM-L6-v2` (local, CPU)** | **None — ships in repo** |
+
+### Embedding strategy
+
+The `chroma_db/` directory is **shipped pre-built** in this repository. All 316 knowledge chunks are embedded with `sentence-transformers/all-MiniLM-L6-v2` (384-dim, ~80 MB, runs on CPU). This means:
+
+- **Reviewers**: set only `ANTHROPIC_API_KEY` → clone → run ✅
+- **Ingestion** (if re-building from PDFs): requires GCP credentials + Vertex AI; run `migrate_embeddings.py` afterward to convert to local embeddings
+
+---
+
+## Key Design Decisions
+
+- **Deterministic image bboxes**: `pymupdf page.get_image_info()` gives exact bounding boxes with no LLM needed — Gemini only captions inside those regions.
+- **Percentage-based coordinates**: bboxes stored as `{x,y,w,h}` fractions of page dimensions so the frontend overlay works at any CSS size.
+- **Chunk-type routing**: queries are classified into "structured-first", "vision-first", or "text-first" retrieval before hitting ChromaDB.
+- **Idempotent ingestion**: chunk IDs are MD5 hashes of `product_id + page + type + index` — re-running ingestion upserts without creating duplicates.
+- **Fallback chain**: `render_artifact` retries Sonnet with a simplified prompt, then falls back to a hardcoded HTML table — never returns empty.
+- **Dual-mode embeddings**: Vertex `text-embedding-004` at ingest time (highest quality); local `all-MiniLM-L6-v2` at query time (no API key required).
+- **Real streaming**: tool loop runs synchronously (tool calls must complete); final synthesis uses `messages.stream()` so tokens appear immediately.
+
+---
+
+## Image Input Support
+
+The `/ask` endpoint accepts an optional base64-encoded image alongside the text query:
+
+```json
+POST /ask
+{
+  "message": "Why is my weld bead so porous?",
+  "product_id": "vulcan_220",
+  "conversation_id": "...",
+  "image_data": "<base64 string>",
+  "image_media_type": "image/jpeg"
+}
+```
+
+Claude receives the image as a vision content block and can describe what it sees, identify the welding process, spot setup errors, and cross-reference with the manual knowledge base.
+
+The frontend chat input includes a 📎 attach button with an inline image preview.
+
+---
+
+## Setup (Full Ingestion from Scratch)
+
+> Only needed if you want to re-ingest the PDFs. The shipped `chroma_db/` already contains all embeddings.
+
+### Prerequisites
+
+- Python 3.11+, Node 18+
+- A Google Cloud project with:
+  - **Vertex AI API** enabled
+  - Application Default Credentials: `gcloud auth application-default login`
+
+### 1. Configure environment
+
+```bash
+cp .env.example .env
+# Set ANTHROPIC_API_KEY and GOOGLE_CLOUD_PROJECT
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Ingest the manuals
+
+```bash
+python run_ingest.py vulcan_220
+```
+
+### 4. Migrate embeddings to local model (required after ingestion)
+
+```bash
+python migrate_embeddings.py --product-id vulcan_220
+```
+
+### 5. Start the services
+
+```bash
+uvicorn main:app --reload --port 8080
+cd frontend && npm install && npm run dev
+```
+
+---
+
+## Docker (demo deployment)
+
+```bash
+docker build -t vulcan-agent .
+docker run -p 8080:8080 -e ANTHROPIC_API_KEY=sk-ant-... vulcan-agent
+```
+
+> `chroma_db/` and `assets/` are copied into the image. No GCP credentials needed at runtime.
+
+---
+
+## Deploy to Cloud Run + Vercel
+
+**Backend (Cloud Run):**
+```bash
+gcloud run deploy vulcan-agent \
+  --source . \
+  --region us-central1 \
+  --allow-unauthenticated \
+  --set-env-vars ANTHROPIC_API_KEY=sk-ant-...,FRONTEND_URL=https://your-app.vercel.app
+```
+
+**Frontend (Vercel):**
+```bash
+cd frontend
+vercel --prod
+# Set VITE_API_URL env var in Vercel dashboard to your Cloud Run URL
+```

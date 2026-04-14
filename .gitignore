@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Environment
+.env
+*.env.local
+
+# Secrets
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!products.json
+
+# Vertex / GCP credentials
+service-account.json
+sa.json
+credentials.json
+gcloud/
+
+# Data — ship pre-built chroma_db/ and assets/ for clone-and-run.
+# Ingestion state files are only needed during ingestion.
+assets/*/ingest_state_*.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# IDE
+.cursor/
+*.code-workspace
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

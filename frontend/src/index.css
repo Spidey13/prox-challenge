@@ -1,0 +1,249 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0a0c10;
+  --surface: #12151c;
+  --surface2: #1a1e2a;
+  --surface3: #222840;
+  --border: #1f2433;
+  --border-bright: #2e3550;
+  --accent: #e67e22;
+  --accent-dim: rgba(230, 126, 34, 0.15);
+  --accent-glow: rgba(230, 126, 34, 0.25);
+  --accent-border: rgba(230, 126, 34, 0.4);
+  --text: #d4d8e4;
+  --text-muted: #6b7394;
+  --text-dim: #4a5070;
+  --user-bubble: #162032;
+  --user-bubble-border: #1e3a5a;
+  --danger: #dc2626;
+  --success: #16a34a;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 14px;
+}
+
+html, body, #root {
+  height: 100%;
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------ */
+/* Markdown body — assistant message content                           */
+/* ------------------------------------------------------------------ */
+.markdown-body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4 {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--text);
+  margin: 1em 0 0.4em;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.markdown-body h1 { font-size: 1.2em; }
+.markdown-body h2 { font-size: 1.1em; color: #e8eaf0; }
+.markdown-body h3 { font-size: 1em; color: var(--accent); }
+
+.markdown-body p { margin: 0.5em 0; }
+.markdown-body p:first-child { margin-top: 0; }
+.markdown-body p:last-child { margin-bottom: 0; }
+
+.markdown-body strong {
+  font-weight: 600;
+  color: #e8eaf0;
+}
+
+.markdown-body em { color: var(--text-muted); font-style: italic; }
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.4em;
+  margin: 0.4em 0;
+}
+
+.markdown-body li { margin: 0.2em 0; }
+.markdown-body li::marker { color: var(--accent); }
+
+.markdown-body ol li::marker {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.markdown-body code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface3);
+  border: 1px solid var(--border-bright);
+  border-radius: 4px;
+  padding: 1px 5px;
+  color: var(--accent);
+}
+
+.markdown-body pre {
+  background: var(--surface3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  overflow-x: auto;
+  margin: 0.6em 0;
+}
+
+.markdown-body pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  font-size: 0.85em;
+}
+
+.markdown-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.6em 0;
+  font-size: 0.9em;
+}
+
+.markdown-body th {
+  background: var(--surface3);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 6px 10px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-bright);
+}
+
+.markdown-body td {
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.markdown-body tr:last-child td { border-bottom: none; }
+.markdown-body tr:hover td { background: var(--surface2); }
+
+.markdown-body blockquote {
+  border-left: 3px solid var(--accent);
+  padding: 4px 12px;
+  margin: 0.5em 0;
+  color: var(--text-muted);
+  background: var(--accent-dim);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.markdown-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-border);
+}
+
+.markdown-body a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--border-bright);
+  margin: 1em 0;
+}
+
+/* ------------------------------------------------------------------ */
+/* Animations                                                          */
+/* ------------------------------------------------------------------ */
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(0.85); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+@keyframes weld-glow {
+  0%, 100% { box-shadow: 0 0 6px var(--accent-glow); }
+  50% { box-shadow: 0 0 16px var(--accent-glow), 0 0 32px rgba(230,126,34,0.1); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion                                                      */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Mobile layout helpers                                               */
+/* ------------------------------------------------------------------ */
+.mobile-tab-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-tab-bar {
+    display: flex;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only {
+    display: none !important;
+  }
+}

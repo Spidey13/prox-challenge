@@ -1,0 +1,16 @@
+{
+  "vulcan_220": {
+    "name": "Vulcan OmniPro 220",
+    "description": "multiprocess welder with MIG, Flux-Cored, TIG, and Stick welding capabilities, synergic LCD control system, and dual voltage (120V/240V) operation",
+    "pdf_directory": "files",
+    "persona": "You are talking to someone who just bought this welder and is setting it up in their garage. They are capable but not a professional welder. Be direct, precise, and practical.",
+    "structured_keywords": [
+      "duty cycle",
+      "amperage",
+      "voltage",
+      "wire speed",
+      "polarity",
+      "setting"
+    ]
+  }
+}
