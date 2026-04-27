@@ -6,10 +6,10 @@ Usage
 python run_ingest.py
 
 # Ingest a specific product
-python run_ingest.py vulcan_220
+python run_ingest.py trane_precedent
 
 # Re-ingest from scratch (clears ChromaDB collection + rendered assets)
-python run_ingest.py vulcan_220 --fresh
+python run_ingest.py trane_precedent --fresh
 
 # List all registered products and their PDF counts
 python run_ingest.py --list

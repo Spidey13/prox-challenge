@@ -28,6 +28,15 @@ class ProductInfo:
     pdf_directory: str
     persona: str
     structured_keywords: tuple[str, ...]
+    # Routing / prompt injection — fault diagnosis keywords for this domain
+    fault_triggers: tuple[str, ...]
+    fault_examples: tuple[str, ...]
+    # Artifact types available for this product: {type_key: prompt_template}
+    artifact_types: dict[str, str]
+    # Frontend scenario cards for the empty state
+    scenarios: tuple[dict, ...]
+    # Escalation copy for job card no-path modal
+    escalation_copy: dict[str, Any]
 
     def get_pdf_paths(self) -> list[Path]:
         """Return sorted list of all PDFs in pdf_directory."""
@@ -62,6 +71,11 @@ def load_product_registry(
             pdf_directory=entry.get("pdf_directory", "files"),
             persona=entry.get("persona", "Be direct, precise, and practical."),
             structured_keywords=tuple(entry.get("structured_keywords", [])),
+            fault_triggers=tuple(entry.get("fault_triggers", [])),
+            fault_examples=tuple(entry.get("fault_examples", [])),
+            artifact_types=dict(entry.get("artifact_types", {})),
+            scenarios=tuple(entry.get("scenarios", [])),
+            escalation_copy=dict(entry.get("escalation_copy", {})),
         )
     return registry
 
@@ -144,7 +158,7 @@ def load_config() -> Config:
         vertex_location=_optional("VERTEX_LOCATION", "us-central1"),
         chroma_path=_optional("CHROMA_PATH", "./chroma_db"),
         assets_path=_optional("ASSETS_PATH", "./assets"),
-        default_product_id=_optional("DEFAULT_PRODUCT_ID", "vulcan_220"),
+        default_product_id=_optional("DEFAULT_PRODUCT_ID", "trane_precedent"),
         embed_model=_optional("EMBED_MODEL", "text-embedding-004"),
         local_embed_model=_optional("LOCAL_EMBED_MODEL", "all-MiniLM-L6-v2"),
         # Direct Anthropic API model IDs (not Vertex @snapshot format)

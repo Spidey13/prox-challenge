@@ -1,35 +1,35 @@
-# Vulcan OmniPro 220 — Prox Multimodal Support Agent
+# Prox — Vulcan OmniPro 220 Support Agent
 
 ![Vulcan OmniPro Agent Showcase](frontend/src/assets/hero.png)
 
-A production-grade, multimodal technical support agent built for the **Vulcan OmniPro 220** multiprocess welder. This system implements Anthropic's native `tool_use` agentic loops combined with live streaming, interactive React artifacts (Claude-style UI), and a "clone-and-run" dependency-free local retrieval system.
+Technical support agent for the **Vulcan OmniPro 220** multiprocess welder. Runs Anthropic's `tool_use` loop with SSE streaming, interactive React artifacts, and a bundled vector DB — reviewers need only `ANTHROPIC_API_KEY`.
 
-🚀 **Live Cloud Run Demo:** [https://vulcan-agent-33492766578.us-central1.run.app](https://vulcan-agent-33492766578.us-central1.run.app)
-
-*(The demo runs entirely in a single Cloud Run container with a baked-in AI model and pre-built vector DB).*
+**Live demo:** [https://vulcan-agent-33492766578.us-central1.run.app](https://vulcan-agent-33492766578.us-central1.run.app)
 
 ---
 
-## 🌟 Challenge Highlights (Why this solution stands out)
+## Design choices
 
-1. **Fully Functional Interactive Artifacts (with State Persistence)**
-   Instead of just text, the agent writes raw HTML/CSS/JS (via Claude 3.5 Sonnet) and renders it safely into an expanding right-side panel. **Crucially, the UI allows users to 📌 Pin artifacts** so they persist through future conversation steps.
-2. **Solving the "Streaming vs. Tool-Use" Paradox**
-   Typically, waiting for LLM tools to finish causes huge latency spikes. This backend implements a custom Python generator (`ask_streaming()`) that runs synchronous `search_knowledge` and `get_manual_image` tool loops behind the scenes, and then securely opens the SSE pipe to stream the final synthesis token-by-token.
-3. **The "Dual Embedding" Deployment Architecture**
-   95% of RAG prototypes require reviewers to input paid GCP/OpenAI keys to query vector databases. We split the architecture:
-   - **Ingestion (GCP):** Gemini Flash extracts structured text/bboxes. Vertex text-embedding-004 vectorizes it.
-   - **Serving (Zero Setup):** We migrated the vectors to `sentence-transformers/all-MiniLM-L6-v2` (80MB) and baked the DB directly into the repo. Reviewers only need an `ANTHROPIC_API_KEY` to run the entire backend fully offline (except for Anthropic API calls).
-4. **Zero Cold-Start DevOps**
-   Serverless deployments (like Cloud Run) notoriously hang if they have to download ML models on the fly. We explicitly customized the Dockerfile with `ENV HF_HOME` to permanently cache the embedding model weights into the container layers, dropping cold start times from ~15s to zero.
-5. **Polished Accessibility (WIG & React Doctor 96/100)**
-   The UI isn't just an MVP. It features `overscroll-behavior: contain` on full-screen modals, correct ARIA roles on clickable spans, full keyboard navigation (ESC handling), and strict CSS custom properties for instant dark mode switching.
+1. **Interactive artifacts with pinning**
+   Haiku drives the tool loop; Sonnet writes HTML/CSS/JS rendered in a sandboxed iframe. Artifacts can be pinned so they stay visible across follow-up messages.
+
+2. **SSE streaming over synchronous tool loops**
+   Tool calls run synchronously in a thread pool. Once the loop finishes, `ask_streaming()` opens a real Anthropic stream and pipes tokens directly to the SSE response.
+
+3. **No GCP credentials needed to run**
+   Ingestion uses Vertex `text-embedding-004` (768-dim). Serving re-embeds with local `sentence-transformers/all-MiniLM-L6-v2` (384-dim, 80 MB). The converted `chroma_db/` is checked into the repo.
+
+4. **No cold-start ML download**
+   `ENV HF_HOME` in the Dockerfile bakes embedding weights into the image layer, dropping cold start from ~15 s to zero.
+
+5. **Accessibility**
+   `overscroll-behavior: contain` on modals, correct ARIA roles, full keyboard navigation, CSS custom properties for dark mode. Scored 96/100 on Web Interface Guidelines audit.
 
 ---
 
-## 🏗 Architecture (Claude's `tool_use` Agentic Loop)
+## Architecture
 
-This agent is built purely on **Claude's native `tool_use` mechanism**. There are no heavy bloated agent frameworks (like LangChain or AutoGen) obscuring the API calls. 
+Built directly on Claude's `tool_use` mechanism — no LangChain, no AutoGen.
 
 ```
 PDF manuals (files/)
@@ -38,76 +38,66 @@ PDF manuals (files/)
  ingest.py  (Gemini 2.5 Flash vision + structured extraction)
                   │ Vertex text-embedding-004 (ingestion only)
                   ▼
-            chroma_db/   ← shipped in repo (all-MiniLM-L6-v2 embeddings)
+            chroma_db/   ← bundled in repo (all-MiniLM-L6-v2)
                   │
                   ▼
- agent.py   (Anthropic tool_use agentic loop)
-            ├─ Haiku  — agentic loop + text answers
-            └─ Sonnet — interactive HTML artifact generation
+ agent.py   (Anthropic tool_use loop)
+            ├─ Haiku  — tool loop + text answers
+            └─ Sonnet — HTML artifact generation
                   │
                   ▼
- main.py    (FastAPI + Server-Sent Events streaming + SPA hosting)
+ main.py    (FastAPI + SSE streaming + SPA hosting)
                   │
                   ▼
  frontend/  (React + Vite — two-panel chat + artifact viewer)
 ```
 
-### Tools Equipped
+### Tools
+
 | Tool | Purpose |
-|------|-------------|
-| `search_knowledge` | High-speed Vector search over ingested manual chunks (ChromaDB + all-MiniLM-L6-v2) |
-| `get_manual_image` | Fetches base64 manual page PNGs + renders highlighted bounding boxes for diagram lookups |
-| `render_artifact` | Context switches to Sonnet 3.5 to safely codegen interactive HTML components for users |
+|------|---------|
+| `search_knowledge` | Vector search over ingested manual chunks (ChromaDB + all-MiniLM-L6-v2) |
+| `get_manual_image` | Returns manual page PNGs with optional highlighted bounding boxes |
+| `render_artifact` | Calls Sonnet to generate self-contained interactive HTML |
 
 ---
 
-## 🏃 Quick Start (Clone & Run for Reviewers)
-
-Because we ship the ChromaDB instance and the local embedding model dynamically, getting this running locally is unbelievably easy. You do NOT need GCP credentials.
+## Quick start
 
 ```bash
 git clone https://github.com/Spidey13/prox-challenge
 cd prox-challenge
 
-# 1 — Set your Anthropic key (only credential required to run)
+# Set your Anthropic key (only credential required)
 cp .env.example .env
-# Edit .env: set ANTHROPIC_API_KEY=sk-ant-...
+# Edit .env: ANTHROPIC_API_KEY=sk-ant-...
 
-# 2 — Install Python dependencies
+# Install Python dependencies
 uv run pip install -r requirements.txt
 
-# 3 — Start the backend (chroma_db/ ships pre-built — no ingestion needed)
+# Start the backend (chroma_db/ is pre-built — no ingestion step needed)
 uv run uvicorn main:app --reload --port 8080
 
-# 4 — Start the frontend
-cd frontend
-npm install
-npm run dev
+# Start the frontend
+cd frontend && npm install && npm run dev
 # → http://localhost:5173
 ```
 
 ---
 
-## 📸 Image Input Support (Vision)
+## Image input
 
-The `/ask` endpoint natively accepts `base64` image payloads alongside the user prompt.
-* If a welder uploads a photo of a porous weld bead or a confusing digital interface, the image is packed directly into the Anthropic `content` block. 
-* Claude acts as a mechanic, describing the potential issues in the photo and autonomously firing the `search_knowledge` tool to query the manual for the matching manufacturer fix.
+`/ask` accepts `base64` image payloads alongside the text prompt. Upload a photo of a fault or weld bead, and Claude describes the issue and calls `search_knowledge` to locate the matching manual section.
 
 ---
 
-## 🐳 Deployment & Cloud Run Details
+## Docker
 
-The Docker deployment has been highly optimized to run as a **single, unified service**.
+Single container — backend and frontend on port 8080.
 
 ```bash
 docker build -t vulcan-agent .
 docker run -p 8080:8080 -e ANTHROPIC_API_KEY=sk-ant-... vulcan-agent
 ```
 
-Instead of deploying Vercel + Cloud Run separately, the `Dockerfile` utilizes a **multi-stage build**:
-1. It builds the Vite/React SPA natively inside a Node container.
-2. It copies `/dist` over to the Python 3.11 container.
-3. FastAPI's `StaticFiles` catches all frontend traffic and serves the React application seamlessly over port 8080, bypassing CORS completely and saving money on hosting.
-
-Enjoy the application!
+The Dockerfile uses a multi-stage build: Vite compiles the SPA in a Node container, `/dist` is copied to the Python 3.11 layer, and FastAPI serves it via `StaticFiles`. No separate Vercel deployment, no CORS config needed.

@@ -83,6 +83,8 @@ class AskRequest(BaseModel):
     conversation_id: str
     image_data: str | None = None        # base64-encoded image (optional)
     image_media_type: str | None = None  # e.g. "image/jpeg", "image/png"
+    fault_category: str | None = None    # structured fault type from button tap
+    intent_known: bool = False           # True when fault_category set by UI, not typed text
 
 
 # ---------------------------------------------------------------------------
@@ -92,7 +94,7 @@ class AskRequest(BaseModel):
 
 @app.get("/health")
 async def health() -> dict:
-    return {"status": "ok", "version": "1.0.0"}
+    return {"status": "ok", "version": "2.0.0"}
 
 
 @app.post("/ingest")
@@ -142,19 +144,29 @@ async def ask(req: AskRequest) -> EventSourceResponse:
           "images": [...]}``                      — final metadata
     """
     agent = _get_agent()
+    cache_key = SemanticCache.make_key(req.message, req.product_id, req.fault_category)
 
     # Check exact-match cache first
-    cached = _cache.get(req.message)
+    cached = _cache.get(cache_key)
     if cached:
         cached_data = json.loads(cached)
         async def cached_stream():
-            # Stream the answer word-by-word so the UI still animates
-            for word in cached_data.get("answer", "").split(" "):
-                yield {"data": json.dumps({"type": "token", "content": word + " "})}
+            job_card = cached_data.get("job_card")
+            if job_card:
+                yield {"data": json.dumps({
+                    "type": "job_card_start",
+                    "metadata": job_card.get("metadata", {}),
+                })}
+                for step in job_card.get("steps", []):
+                    yield {"data": json.dumps({"type": "job_card_step", "step": step})}
+            else:
+                for word in cached_data.get("answer", "").split(" "):
+                    yield {"data": json.dumps({"type": "token", "content": word + " "})}
             yield {"data": json.dumps({
                 "type": "done",
                 "suggestions": cached_data.get("suggestions", []),
                 "artifact": cached_data.get("artifact"),
+                "job_card": job_card,
                 "images": cached_data.get("images", []),
             })}
         return EventSourceResponse(cached_stream())
@@ -185,6 +197,8 @@ async def ask(req: AskRequest) -> EventSourceResponse:
                         history=history_without_latest,
                         image_data=req.image_data,
                         image_media_type=req.image_media_type,
+                        fault_category=req.fault_category,
+                        intent_known=req.intent_known,
                     ):
                         q.put((event_type, payload))
                 except Exception as exc:
@@ -213,21 +227,35 @@ async def ask(req: AskRequest) -> EventSourceResponse:
                     answer_accumulated += payload
                     yield {"data": json.dumps({"type": "token", "content": payload})}
 
+                elif event_type == "job_card_start":
+                    yield {"data": json.dumps({
+                        "type": "job_card_start",
+                        "metadata": payload["metadata"],
+                    })}
+
+                elif event_type == "job_card_step":
+                    yield {"data": json.dumps({
+                        "type": "job_card_step",
+                        "step": payload,
+                    })}
+
                 elif event_type == "done":
                     answer = payload.get("answer", "")
                     # Append assistant turn to session
                     _session_store.append(req.conversation_id, "assistant", answer)
                     # Cache the full result for exact-match future hits
-                    _cache.set(req.message, json.dumps({
+                    _cache.set(cache_key, json.dumps({
                         "answer": answer,
                         "suggestions": payload.get("suggestions", []),
                         "artifact": payload.get("artifact"),
+                        "job_card": payload.get("job_card"),
                         "images": payload.get("images", []),
                     }))
                     yield {"data": json.dumps({
                         "type": "done",
                         "suggestions": payload.get("suggestions", []),
                         "artifact": payload.get("artifact"),
+                        "job_card": payload.get("job_card"),
                         "images": payload.get("images", []),
                     })}
 
@@ -274,6 +302,85 @@ async def get_image(product_id: str, doc_slug: str, page_number: int) -> FileRes
         media_type="image/png",
         headers={"Cache-Control": "max-age=3600"},
     )
+
+
+class ExplainStepRequest(BaseModel):
+    product_id: str
+    source_citation: str          # e.g. "p.34 §6.2"
+    instruction: str | None = None     # step instruction text — used for page lookup
+    artifact_type: str | None = None   # e.g. "polarity_diagram" — omit to skip artifact
+    fault_context: str | None = None   # step instruction + fault desc for artifact prompt
+
+
+@app.post("/explain-step")
+async def explain_step(req: ExplainStepRequest) -> JSONResponse:
+    """Return manual page image (and optionally a rendered artifact) for a job card step.
+
+    Always returns manual_image. Only calls Sonnet when artifact_type is set.
+    """
+    import re as _re
+    agent = _get_agent()
+
+    # Strategy: try to extract a printed page number from the citation string first.
+    # Sonnet often writes "p.1" (wrong) so if we get page 0 AND have the step
+    # instruction text, do a fresh search_knowledge lookup and use the top result's
+    # page_number instead — this is always accurate because it's from the actual DB.
+    m = _re.search(r'p\.?\s*(\d+)', req.source_citation)
+    if not m:
+        m = _re.search(r'\[Page\s+(\d+)\]', req.source_citation)
+    parsed_page = max(0, int(m.group(1)) - 1) if m else 0
+
+    page_number = parsed_page
+    doc_slug_override: str | None = None
+
+    if (parsed_page == 0 or not m) and req.instruction:
+        # Citation was useless — look up the real page from the knowledge base
+        loop_inner = asyncio.get_event_loop()
+        search_results = await loop_inner.run_in_executor(
+            None,
+            lambda: agent._tool_search_knowledge(
+                query=req.instruction,
+                product_id=req.product_id,
+            ),
+        )
+        if search_results and search_results[0].get("page_number") is not None:
+            page_number = search_results[0]["page_number"]
+            doc_slug_override = search_results[0].get("doc_slug") or None
+
+    loop = asyncio.get_event_loop()
+
+    manual_image = await loop.run_in_executor(
+        None,
+        lambda: agent._tool_get_manual_image(
+            product_id=req.product_id,
+            page_number=page_number,
+            doc_slug=doc_slug_override,
+        ),
+    )
+
+    artifact_html: str | None = None
+    if req.artifact_type:
+        from agent import _build_artifact_prompts
+        from config import get_product
+        context = req.fault_context or f"Artifact type: {req.artifact_type}"
+        try:
+            product = get_product(req.product_id)
+            artifact_prompts = _build_artifact_prompts(product.name, req.product_id)
+            artifact_html = await loop.run_in_executor(
+                None,
+                lambda: agent._tool_render_artifact(
+                    artifact_type=req.artifact_type,
+                    context=context,
+                    artifact_prompts=artifact_prompts,
+                ),
+            )
+        except Exception as exc:
+            log.warning("explain-step artifact render failed: %s", exc)
+
+    return JSONResponse({
+        "manual_image": manual_image,
+        "artifact_html": artifact_html,
+    })
 
 
 @app.get("/annotations/{product_id}/{doc_slug}/{page_number}")

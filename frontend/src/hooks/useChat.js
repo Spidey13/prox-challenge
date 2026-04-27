@@ -32,11 +32,10 @@ export function useChat(productId = DEFAULT_PRODUCT_ID) {
   const [agentPhase, setAgentPhase] = useState('idle')
   const [currentArtifact, setCurrentArtifact] = useState(null)
   const [pinnedArtifact, setPinnedArtifact] = useState(null)
+  const [currentJobCard, setCurrentJobCard] = useState(null)
   const conversationId = useRef(generateId())
   const abortRef = useRef(null)
   const thinkingStartRef = useRef(null)
-
-  const isStreaming = agentPhase !== 'idle'
 
   /**
    * sendMessage(text, imageFile?)
@@ -79,6 +78,7 @@ export function useChat(productId = DEFAULT_PRODUCT_ID) {
 
     setMessages(prev => [...prev, userMsg, assistantMsg])
     setAgentPhase('thinking')
+    setCurrentJobCard(null)
     thinkingStartRef.current = Date.now()
 
     let accumulated = ''
@@ -137,6 +137,17 @@ export function useChat(productId = DEFAULT_PRODUCT_ID) {
               updated[updated.length - 1] = { ...last, content: accumulated }
               return updated
             })
+          } else if (event.type === 'job_card_start') {
+            if (firstToken) {
+              firstToken = false
+              setAgentPhase('streaming')
+            }
+            setCurrentJobCard({ metadata: event.metadata, steps: [] })
+          } else if (event.type === 'job_card_step') {
+            setCurrentJobCard(prev => ({
+              ...prev,
+              steps: [...(prev?.steps ?? []), event.step],
+            }))
           } else if (event.type === 'done') {
             const newArtifact = event.artifact ?? null
 
@@ -197,9 +208,9 @@ export function useChat(productId = DEFAULT_PRODUCT_ID) {
   return {
     messages,
     agentPhase,
-    isStreaming,
     currentArtifact,
     pinnedArtifact,
+    currentJobCard,
     thinkingStart,
     sendMessage,
     viewArtifact,

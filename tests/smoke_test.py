@@ -89,7 +89,7 @@ def test_tool_use_loop():
     tools = [
         {
             "name": "search_knowledge",
-            "description": "Search the welding manual.",
+            "description": "Search the equipment manual.",
             "input_schema": {
                 "type": "object",
                 "properties": {"query": {"type": "string"}},
@@ -100,13 +100,13 @@ def test_tool_use_loop():
 
     client = anthropic.Anthropic(api_key=config.anthropic_api_key)
     messages = [
-        {"role": "user", "content": "What is the duty cycle for MIG at 200A on 240V?"}
+        {"role": "user", "content": "What does the RTRM system LED blinking twice every two seconds indicate?"}
     ]
 
     resp = client.messages.create(
         model=config.haiku,
         max_tokens=256,
-        system="You are a welding support agent. Use search_knowledge before answering.",
+        system="You are a field service support agent. Use search_knowledge before answering.",
         tools=tools,
         tool_choice={"type": "auto", "disable_parallel_tool_use": True},
         messages=messages,
@@ -179,7 +179,7 @@ def test_single_page_ingest():
     import fitz
     from ingest import Ingester
 
-    ingester = Ingester("vulcan_220_smoke", str(pdf_path))
+    ingester = Ingester("trane_precedent_smoke", str(pdf_path))
     ingester._init_clients()
     ingester._make_dirs()
 
@@ -198,7 +198,7 @@ def test_single_page_ingest():
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
-    print("\nVulcan OmniPro 220 - Smoke Tests\n")
+    print("\nTrane Precedent RTU - Smoke Tests\n")
 
     results = [
         run("Config loads + ANTHROPIC_API_KEY set",   test_config),

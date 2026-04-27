@@ -1,5 +1,4 @@
-"""Exact-match cache for MVP. Replace with Redis + cosine similarity at scale
-using sentence-transformers."""
+"""In-memory exact-match query cache. Swap for Redis + vector similarity at scale."""
 
 from threading import Lock
 
@@ -25,3 +24,21 @@ class SemanticCache:
         """Store *response* under *query*."""
         with self._lock:
             self._store[query] = response
+
+    @classmethod
+    def make_key(
+        cls,
+        query: str,
+        product_id: str | None = None,
+        fault_category: str | None = None,
+    ) -> str:
+        """Return a stable cache key.
+
+        Structured fault queries key on "{product_id}:{fault_category}" —
+        deterministic across sessions because the same fault on the same
+        product always queries the same manual content.
+        Falls back to the raw query string for text/photo paths.
+        """
+        if fault_category and product_id:
+            return f"{product_id}:{fault_category}"
+        return query

@@ -102,6 +102,6 @@ def migrate(product_id: str) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Re-embed ChromaDB with local model")
-    parser.add_argument("--product-id", default="vulcan_220")
+    parser.add_argument("--product-id", default="trane_precedent")
     args = parser.parse_args()
     migrate(args.product_id)

@@ -10,6 +10,7 @@ export default defineConfig({
       '/ingest': 'http://localhost:8080',
       '/image': 'http://localhost:8080',
       '/annotations': 'http://localhost:8080',
+      '/explain-step': 'http://localhost:8080',
       '/health': 'http://localhost:8080',
     },
   },

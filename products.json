@@ -1,16 +1,111 @@
 {
-  "vulcan_220": {
-    "name": "Vulcan OmniPro 220",
-    "description": "multiprocess welder with MIG, Flux-Cored, TIG, and Stick welding capabilities, synergic LCD control system, and dual voltage (120V/240V) operation",
+  "trane_precedent": {
+    "name": "Trane Precedent Rooftop Unit",
+    "description": "commercial packaged rooftop air conditioner with ReliaTel microprocessor controls, gas/electric heating, economizer, and multi-zone VAV capability (3-10 tons, 60Hz)",
     "pdf_directory": "files",
-    "persona": "You are talking to someone who just bought this welder and is setting it up in their garage. They are capable but not a professional welder. Be direct, precise, and practical.",
+    "persona": "You are supporting an HVAC service technician working on a commercial rooftop unit. They have field experience and may be on the roof with limited connectivity. Be precise with terminal references, voltage readings, and module names (RTRM, RTOM, ECA, etc.). Always mention lockout/tagout before any electrical or refrigerant work. Cite LED flash codes and voltage test points when relevant.",
     "structured_keywords": [
-      "duty cycle",
-      "amperage",
+      "fault code",
+      "LED",
+      "diagnostic",
+      "RTRM",
+      "RTOM",
+      "economizer",
+      "compressor",
+      "thermostat",
+      "CFM",
+      "setpoint",
       "voltage",
-      "wire speed",
-      "polarity",
-      "setting"
-    ]
+      "amperage",
+      "flash"
+    ],
+    "fault_triggers": [
+      "not working",
+      "won't start",
+      "stops",
+      "error",
+      "fault",
+      "problem",
+      "failure",
+      "tripping",
+      "short cycling",
+      "no heat",
+      "no cooling",
+      "freezing up",
+      "locked out",
+      "LED blinking",
+      "flash code",
+      "overheating",
+      "noise",
+      "vibration",
+      "leak",
+      "not running",
+      "won't cool",
+      "won't heat",
+      "won't turn on",
+      "diagnostic",
+      "maintenance"
+    ],
+    "fault_examples": [
+      "compressor won't start → job card",
+      "2-flash fault code on RTRM → job card",
+      "unit short cycling on high pressure → job card",
+      "no heat, gas valve not opening → job card",
+      "supply fan won't prove within 40 seconds → job card",
+      "economizer damper stuck open → job card",
+      "heat fail and cool fail at same time → job card"
+    ],
+    "artifact_types": {
+      "diagnostic_lookup": "Create a self-contained HTML fault-code reference page for {product_name}.\n\n## DATA\n{context}\n\n## LAYOUT — warm paper design\n\nFONTS (import in <head> via Google Fonts link tag): Fraunces (ital,opsz,wght@0,9..144,300..700;1,9..144,300..700) + Geist + Geist+Mono.\n\nTOPNAV (position sticky, top 0, z-index 100, background rgba(243,237,225,0.92), backdrop-filter blur(12px), border-bottom 1px solid #d9cfba, padding 12px 24px, display flex, justify-content space-between, align-items center):\n- Left: brand circle div (40px, border-radius 50%, background #1d1a15, color #f3ede1, Fraunces italic 20px 'D', display inline-flex, align-items center, justify-content center, flex-shrink 0) + span (Fraunces 18px letter-spacing -0.02em, margin-left 10px): 'Diagnostiq' + em ' / Reference' (italic font-weight 300 color #5a5245)\n- Right: search input (background #fbf6ea, border 1px solid #d9cfba, border-radius 100px, padding 8px 16px, font Geist Mono 12px color #1d1a15, placeholder 'Search fault codes…', width 220px, outline none)\n\nHERO (padding 48px 24px 36px, max-width 1100px, margin 0 auto, display grid, grid-template-columns 1fr 340px, gap 40px, align-items start):\n- Left: eyebrow chip (Geist Mono 10px uppercase letter-spacing 0.14em, background #fbe9d9, color #b84d14, padding 4px 12px, border-radius 100px, display inline-block, margin-bottom 20px) with text 'EQUIPMENT REFERENCE · {product_name}'; then h1 (Fraunces 64px font-weight 300 line-height 1.02 letter-spacing -0.03em color #1d1a15 margin 0 0 12px, font-variation-settings 'opsz' 144 'SOFT' 50) — write the product name with one key term wrapped in em (font-style italic, color #d96b2e); then p (Fraunces 17px font-style italic font-weight 300 color #5a5245 margin 0)\n- Right: stats card (background #fbf6ea, border 1px solid #d9cfba, border-radius 20px, padding 24px): 2×2 grid (display grid, grid-template-columns 1fr 1fr, gap 0, border-top 1px solid #d9cfba) of quick stats — count distinct codes from DATA and assign them to categories (Total, Critical, Warning, Informational). Each stat cell: padding 14px 8px, border-bottom 1px solid #d9cfba, even cells border-left 1px solid #d9cfba. Number in Fraunces 32px font-weight 400 color #1d1a15. Label in Geist Mono 10px uppercase color #8a8275, margin-top 4px.\n\nMAIN (max-width 1100px, margin 0 auto, padding 0 24px 60px, display grid, grid-template-columns 200px 1fr 240px, gap 28px, align-items start):\n\nLEFT NAV (position sticky, top 64px): ul (list-style none, margin 0, padding 0). Each li: a (Geist Mono 11px uppercase letter-spacing 0.1em, padding 8px 12px, border-radius 8px, color #8a8275, display block, text-decoration none, margin-bottom 4px). First item active: background #fbe9d9, color #b84d14.\n\nMIDDLE — fault list grouped into section elements. Each section has a data-section attribute and an anchor id. Section header: Geist Mono 11px uppercase letter-spacing 0.14em, color #8a8275, padding 20px 0 10px, border-bottom 1px solid #d9cfba, margin-bottom 0.\nEach fault row (class='fault-row', display grid, grid-template-columns 96px 1fr auto, gap 14px, padding 14px 0, border-bottom 1px solid #e8e0d0, align-items center, cursor pointer, transition background 0.15s):\n- LED col: circle div (20px, border-radius 50%, margin-bottom 6px) + flash code below (Geist Mono 11px font-weight 600). Severity colors: crit→#a02a14, warn→#d96b2e, ok→#5c7a54, info→#8a8275. Crit/warn bulbs: animation led-pulse 2s ease-in-out infinite.\n- Text col: fault name (Fraunces 20px font-weight 350 color #1d1a15 margin 0 0 4px letter-spacing -0.01em) + desc (Geist 13px color #5a5245 line-height 1.5 margin 0)\n- Right col: severity chip (Geist Mono 10px uppercase letter-spacing 0.08em, padding 3px 10px, border-radius 100px): crit→(bg #f3c9c0, color #8a2a14); warn→(bg #fbe9d9, color #b84d14); ok→(bg #dce4d1, color #5c7a54); info→(bg #e8e0d0, color #8a8275).\nBelow each fault-row, a collapsible fault-detail div (display none initially; when open display grid, grid-template-columns 1fr 1fr 1fr, gap 16px, padding 16px, background #fbf6ea, border-radius 12px, margin-bottom 8px). Each col: label (Geist Mono 10px uppercase color #8a8275, margin-bottom 6px, display block) + value (Geist 13px color #1d1a15). Columns: 'CODE REF' (value Geist Mono 13px font-weight 600 color #b84d14) | 'FIRST ACTION' | 'MANUAL REF'.\n\nRIGHT ASIDE:\n- Legend card (background #fbf6ea, border 1px solid #d9cfba, border-radius 16px, padding 20px): title Geist Mono 11px uppercase letter-spacing 0.14em color #8a8275 margin-bottom 14px; 4 rows each with colored dot (10px circle, margin-right 10px) + Geist 13px color #5a5245 label: Critical (#a02a14), Warning (#d96b2e), Clear (#5c7a54), Informational (#8a8275).\n- Tip card (background #1d1a15, border-radius 16px, padding 20px, margin-top 16px): quote (Fraunces 16px font-style italic font-weight 300 color #e8d9c0 line-height 1.5 margin 0 0 10px) — write a relevant field-diagnosis tip drawn from DATA; author line (Geist Mono 10px color #8a8275 letter-spacing 0.1em uppercase).\n\n@keyframes led-pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.85)} }\n\nSEARCH JS: on input event, get query value. For each .fault-row, show/hide based on whether row's textContent includes query (case-insensitive, trimmed). If no visible rows, show #no-results div (Fraunces 18px italic color #5a5245, text-align center, padding 40px 0, display none by default).\n\nROW TOGGLE JS: clicking a .fault-row toggles the next sibling .fault-detail between display:none and display:grid.\n\n## RULES\n- Output ONLY the complete HTML document — no markdown code fence, no explanation\n- Vanilla JS only — no CDN scripts (Google Fonts link tag is allowed)\n- Write fault rows as static HTML hardcoded from DATA — do NOT attempt to parse DATA as JSON\n- body: margin 0; padding 0; font-family 'Geist', system-ui, sans-serif; color #1d1a15; background #f3ede1; font-feature-settings 'ss01' 'ss02'",
+      "wiring_diagram": "Create a self-contained HTML control-wiring reference page for {product_name}.\n\n## DATA\n{context}\n\n## LAYOUT — warm paper design\n\nFONTS (import in <head>): Fraunces (ital,opsz,wght@0,9..144,300..700;1,9..144,300..700) + Geist + Geist+Mono from Google Fonts.\n\nTOPNAV (position sticky, top 0, z-index 100, background rgba(243,237,225,0.92), backdrop-filter blur(12px), border-bottom 1px solid #d9cfba, padding 12px 24px, display flex, justify-content space-between, align-items center):\n- Left: brand circle (40px, background #1d1a15, color #f3ede1, Fraunces italic 'D') + 'Diagnostiq' + em ' / Wiring' (Fraunces 18px, em italic color #5a5245)\n\nMAIN (max-width 1060px, margin 0 auto, padding 24px, display grid, grid-template-columns 1fr 240px, gap 28px, align-items start):\n\nLEFT COLUMN:\n- Heading (Fraunces 36px font-weight 300 color #1d1a15 letter-spacing -0.025em margin 0 0 8px) + subtitle (Geist 14px color #5a5245 margin 0 0 24px)\n- SVG panel (background #fbf6ea, border 1px solid #d9cfba, border-radius 20px, padding 24px):\n  SVG (viewBox '0 0 680 380', width 100%, height auto). Module rects: fill #e8e0d0, stroke #c4b89f, stroke-width 1.5, rx 8, cursor pointer. Module labels: Geist Mono 11px, fill #1d1a15, font-weight 600. Terminal labels: Geist 10px fill #5a5245.\n  Wire lines: 24VAC → stroke #5c7a54 (sage green); comms/BAS → stroke #7a3850 (plum); sensor/stat → stroke #d96b2e (accent); output/power → stroke #a02a14 (crit). stroke-width 2, fill none. Add wire labels (Geist Mono 9px) near midpoints.\n  Selected module rect: stroke #d96b2e, stroke-width 2.5.\n  Draw the modules and connections described in DATA — position them logically (e.g., RTRM center-top, outdoor units below, field connections on sides).\n- Wire legend (display flex, flex-wrap wrap, gap 16px, margin-top 16px): each entry — colored line swatch (32px wide, 3px tall, border-radius 2px, display inline-block, margin-right 8px) + Geist 12px color #5a5245. Entries: 24VAC Control (#5c7a54), Comm / BAS (#7a3850), Sensor / Stat (#d96b2e), Output / Power (#a02a14).\n- Detail panel (id='wire-detail', display none, background #fbf6ea, border-left 4px solid #d96b2e, border-radius 0 12px 12px 0, padding 20px, margin-top 16px):\n  Module name (Fraunces 22px font-weight 350 color #1d1a15 margin 0 0 12px).\n  Table (border-collapse collapse, width 100%): th (Geist Mono 10px uppercase letter-spacing 0.1em, color #b84d14, background #f3ede1, padding 8px 12px, border-bottom 1px solid #d9cfba, text-align left); td (Geist 13px color #1d1a15, padding 8px 12px, border-bottom 1px solid #e8e0d0). Columns: Terminal | Function | Expected Voltage | Measurement Tip. Populate from DATA for the selected module.\n\nRIGHT ASIDE:\n- Legend card (background #fbf6ea, border 1px solid #d9cfba, border-radius 16px, padding 20px, margin-bottom 16px): same wire color legend in vertical list form.\n- Safety card (background #1d1a15, border-radius 16px, padding 20px): LOTO reminder drawn from DATA (Fraunces 16px italic color #e8d9c0 line-height 1.5) + Geist Mono 10px uppercase color #8a8275 label.\n\nJS: clicking a module rect shows #wire-detail with that module's terminal data; sets stroke on selected rect to #d96b2e stroke-width 2.5, resets others.\n\n## RULES\n- Output ONLY the complete HTML document — no markdown wrapper\n- Vanilla JS only — no CDN scripts (Google Fonts link tag is allowed)\n- Write SVG elements and table rows as static HTML from DATA — do NOT parse DATA as JSON\n- body: margin 0; padding 0; font-family 'Geist', system-ui, sans-serif; color #1d1a15; background #f3ede1; font-feature-settings 'ss01' 'ss02'",
+      "voltage_calculator": "Create a self-contained HTML voltage and setpoint reference page for {product_name}.\n\n## DATA\n{context}\n\n## LAYOUT — warm paper design\n\nFONTS (import in <head>): Fraunces (ital,opsz,wght@0,9..144,300..700;1,9..144,300..700) + Geist + Geist+Mono from Google Fonts.\n\nTOPNAV (position sticky, top 0, z-index 100, background rgba(243,237,225,0.92), backdrop-filter blur(12px), border-bottom 1px solid #d9cfba, padding 12px 24px, display flex, justify-content space-between, align-items center):\n- Left: brand circle (40px, background #1d1a15, color #f3ede1, Fraunces italic 'D') + 'Diagnostiq' + em ' / Voltage Ref' (Fraunces 18px, em italic color #5a5245)\n\nMAIN (max-width 1000px, margin 0 auto, padding 24px, display grid, grid-template-columns 1fr 240px, gap 28px, align-items start):\n\nLEFT COLUMN:\n- h1 (Fraunces 48px font-weight 300 color #1d1a15 letter-spacing -0.025em margin 0 0 8px font-variation-settings 'opsz' 144 'SOFT' 50) with one key term in em (italic color #d96b2e)\n- p (Fraunces 16px italic font-weight 300 color #5a5245 margin 0 0 28px)\n- Reference table (border-collapse collapse, width 100%, margin-bottom 28px):\n  Columns: Parameter | Normal Range | Notes / Measurement Method\n  th: background #e8e0d0, color #b84d14, Geist Mono 10px uppercase letter-spacing 0.12em, padding 10px 14px, border-bottom 2px solid #d9cfba, text-align left\n  tr:nth-child(odd) td: background #f3ede1; tr:nth-child(even) td: background #fbf6ea\n  td: Geist 13px color #1d1a15, padding 10px 14px, border-bottom 1px dashed #d9cfba\n  Parameter col: font-weight 500, color #1d1a15\n  Range col: Geist Mono 13px color #d96b2e font-weight 600\n  Write one row per distinct voltage value, setpoint, or measurement range in DATA (do NOT parse DATA as JSON, hardcode each row)\n- Status checker card (background #fbf6ea, border 1px solid #d9cfba, border-radius 16px, padding 20px):\n  Label (Geist Mono 11px uppercase letter-spacing 0.12em, color #8a8275, margin-bottom 12px, display block): 'CHECK A READING'\n  Row (display flex, gap 10px, align-items center, flex-wrap wrap):\n    Input: background #e8e0d0, border 1px solid #d9cfba, border-radius 100px, padding 10px 16px, Geist 14px color #1d1a15, width 120px, placeholder e.g. '24.5'\n    Select (same pill style, padding 10px 16px, background #e8e0d0, border 1px solid #d9cfba, border-radius 100px, Geist 13px, color #1d1a15): options are the Parameter names from the table\n    Button: background #1d1a15, color #f3ede1, border none, border-radius 100px, padding 10px 20px, Geist 14px font-weight 500, cursor pointer, letter-spacing 0.02em. Hover: background #b84d14.\n  Result badge (id='check-badge', display none, Geist Mono 11px font-weight 700 uppercase letter-spacing 0.1em, padding 6px 14px, border-radius 100px, margin-top 10px):\n    NORMAL: background #dce4d1, color #5c7a54\n    CHECK: background #fbe9d9, color #b84d14\n    FAULT: background #f3c9c0, color #8a2a14\n\nRIGHT ASIDE:\n- Quick ref card (background #fbf6ea, border 1px solid #d9cfba, border-radius 16px, padding 20px, margin-bottom 16px):\n  Title (Geist Mono 11px uppercase color #8a8275, margin-bottom 14px): 'KEY THRESHOLDS'\n  List of the most critical voltage limits from DATA: each row (padding 8px 0, border-bottom 1px dashed #d9cfba, display flex, justify-content space-between): label (Geist 12px color #5a5245) + value (Geist Mono 12px font-weight 600 color #d96b2e).\n- Safety card (background #1d1a15, border-radius 16px, padding 20px, margin-top 16px): voltage safety reminder (Fraunces 16px italic color #e8d9c0 line-height 1.5) + Geist Mono 10px color #8a8275 label.\n\nJS: on button click, read input value as float, find matching row in table by selected parameter name, parse its Normal Range column (e.g. '21–27 VAC', '24 VAC ±10%', '>18 VAC') to extract min/max. Compare entered value: within range → NORMAL badge; outside by ≤15% → CHECK; outside by >15% → FAULT. Show badge. If parse fails, show CHECK badge.\n\n## RULES\n- Output ONLY the complete HTML document — no markdown wrapper\n- Vanilla JS only — no CDN scripts (Google Fonts link tag is allowed)\n- Write table rows as static HTML hardcoded from DATA — do NOT parse DATA as JSON\n- body: margin 0; padding 0; font-family 'Geist', system-ui, sans-serif; color #1d1a15; background #f3ede1"
+    },
+    "scenarios": [
+      {
+        "icon": "🔴",
+        "title": "LED fault code",
+        "description": "RTRM system LED blinking a diagnostic pattern",
+        "question": "The RTRM system LED is blinking twice every two seconds. What does this diagnostic mean and how do I identify the specific fault?"
+      },
+      {
+        "icon": "❄️",
+        "title": "Compressor won't start",
+        "description": "No cooling, compressor not running, no diagnostics",
+        "question": "The rooftop unit is not cooling. The compressor won't start and there are no fault diagnostics showing on the RTRM. How do I diagnose this?"
+      },
+      {
+        "icon": "🔥",
+        "title": "Gas heat failure",
+        "description": "Heat fail diagnostic or ignition module faults",
+        "question": "I'm getting a heat fail diagnostic on the RTRM. The ignition module LED is flashing 2 times. What does this indicate and what should I check?"
+      },
+      {
+        "icon": "⏱️",
+        "title": "Fan proving failure",
+        "description": "Unit shuts down 40 seconds after starting",
+        "question": "The rooftop unit shuts down approximately 40 seconds after startup. The SERVICE LED is pulsing. I suspect the fan proving switch isn't operating correctly."
+      },
+      {
+        "icon": "💨",
+        "title": "Economizer fault",
+        "description": "Economizer diagnostics or damper issues",
+        "question": "I'm getting an economizer fault. The mixed air temperature seems incorrect and I suspect the damper position is wrong. How do I diagnose the economizer module?"
+      },
+      {
+        "icon": "⚡",
+        "title": "Short cycling",
+        "description": "Compressor trips on high or low pressure repeatedly",
+        "question": "The compressor keeps short cycling — it runs for 3-4 minutes then trips. The cool fail indicator is pulsing. What are the likely causes and how do I check the pressure cutout circuits?"
+      }
+    ],
+    "escalation_copy": {
+      "title": "Escalation Required",
+      "instruction": "This fault requires a certified HVAC technician. Do not proceed further without proper authorization and certification.",
+      "actions": [
+        "Lock out / tag out the unit disconnect per LOTO procedure",
+        "Record the LED flash code and all diagnostic readings",
+        "Contact service dispatch with the job card reference number"
+      ]
+    }
   }
 }

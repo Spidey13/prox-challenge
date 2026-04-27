@@ -35,37 +35,36 @@ class TestCase:
 
 TEST_CASES: list[TestCase] = [
     TestCase(
-        query="What is the duty cycle for MIG welding at 200A on 240V?",
-        must_contain=["duty cycle", "%"],
-        must_trigger_artifact="duty_cycle_calculator",
+        query="The RTRM system LED is blinking twice every two seconds. What does this diagnostic mean?",
+        must_contain=["diagnostic", "LED"],
         must_cite_page=True,
     ),
     TestCase(
-        query="What polarity setup do I need for TIG welding?",
-        must_contain=["electrode", "negative", "positive"],
-        must_trigger_artifact="polarity_diagram",
+        query="Show me the control box module layout for the Precedent unit",
         must_surface_image=True,
+        must_trigger_artifact="module_layout",
+        must_contain=["RTRM", "module"],
     ),
     TestCase(
-        query="I'm getting porosity in my flux-cored welds. What should I check?",
-        must_contain=["porosity", "gas", "wire"],
-        must_trigger_artifact="troubleshooting_flowchart",
+        query="The compressor won't start and there are no fault diagnostics showing. How do I diagnose this?",
+        must_contain=["compressor", "diagnostic"],
         must_cite_page=True,
     ),
     TestCase(
-        query="What wire feed speed for 1/4 inch steel with MIG?",
-        must_contain=["ipm", "wire speed"],
+        query="What is the RTOM discharge air heat setpoint voltage for 75 degrees?",
+        must_contain=["setpoint", "voltage"],
         preferred_chunk_type="structured",
         must_cite_page=True,
     ),
     TestCase(
-        query="Show me the front panel controls",
+        query="Show me the economizer module wiring diagram",
         must_surface_image=True,
-        must_contain=["panel", "control"],
+        must_trigger_artifact="wiring_diagram",
+        must_contain=["economizer", "module"],
     ),
 ]
 
-PRODUCT_ID = "vulcan_220"
+PRODUCT_ID = "trane_precedent"
 CONVERSATION_ID = "eval_run_001"
 
 

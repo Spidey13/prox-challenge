@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react'
 
 const ARTIFACT_LABELS = {
-  duty_cycle_calculator: 'Duty Cycle Calculator',
-  polarity_diagram: 'Polarity Diagram',
-  troubleshooting_flowchart: 'Troubleshooting Guide',
+  diagnostic_lookup: 'Fault Code Lookup',
+  wiring_diagram: 'Control Wiring Reference',
+  voltage_calculator: 'Voltage & Setpoint Reference',
   settings_configurator: 'Settings Configurator',
-  wiring_diagram: 'Wiring Diagram',
+  troubleshooting_flowchart: 'Troubleshooting Guide',
 }
 
 function LoadingSkeleton() {
@@ -30,9 +30,9 @@ function LoadingSkeleton() {
           width: 56,
           height: 56,
           borderRadius: '50%',
-          background: 'var(--accent-dim)',
-          border: '2px solid var(--accent-border)',
-          animation: 'weld-glow 1.6s ease-in-out infinite',
+          background: '#fbe9d9',
+          border: '2px solid rgba(217,107,46,0.4)',
+          animation: 'pulse-glow 1.6s ease-in-out infinite',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -43,7 +43,7 @@ function LoadingSkeleton() {
             width: 12,
             height: 12,
             borderRadius: '50%',
-            background: 'var(--accent)',
+            background: '#d96b2e',
             animation: 'pulse-dot 1.6s ease-in-out infinite',
           }}
         />
@@ -59,7 +59,7 @@ function LoadingSkeleton() {
               height: 10,
               borderRadius: 5,
               width: `${w}%`,
-              background: 'linear-gradient(90deg, var(--surface2) 25%, var(--surface3) 50%, var(--surface2) 75%)',
+              background: 'linear-gradient(90deg, #e8e0d0 25%, #ece5d5 50%, #e8e0d0 75%)',
               backgroundSize: '200% 100%',
               animation: `shimmer 1.8s ease-in-out ${i * 0.1}s infinite`,
             }}
@@ -69,9 +69,9 @@ function LoadingSkeleton() {
 
       <span
         style={{
-          fontFamily: 'var(--font-mono)',
+          fontFamily: "'Geist Mono', monospace",
           fontSize: 11,
-          color: 'var(--text-muted)',
+          color: '#8a8275',
           letterSpacing: '0.04em',
         }}
       >
@@ -82,11 +82,11 @@ function LoadingSkeleton() {
 }
 
 function EmptyPanelState() {
-  const processes = [
-    { label: 'MIG', desc: 'Settings configurator' },
-    { label: 'TIG', desc: 'Polarity diagram' },
-    { label: 'FCAW', desc: 'Troubleshooting guide' },
-    { label: 'STICK', desc: 'Duty cycle calculator' },
+  const capabilities = [
+    { label: 'DIAG', desc: 'Fault code lookup' },
+    { label: 'WIRE', desc: 'Control wiring reference' },
+    { label: 'VOLT', desc: 'Voltage & setpoint tool' },
+    { label: 'FLOW', desc: 'Troubleshooting guide' },
   ]
 
   return (
@@ -99,18 +99,18 @@ function EmptyPanelState() {
         justifyContent: 'center',
         gap: 24,
         padding: 32,
-        color: 'var(--text-muted)',
+        color: '#8a8275',
         textAlign: 'center',
       }}
     >
       {/* Grid icon */}
       <div aria-hidden="true" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
-        {processes.map((p) => (
+        {capabilities.map((p) => (
           <div
             key={p.label}
             style={{
-              background: 'var(--surface2)',
-              border: '1px solid var(--border)',
+              background: '#e8e0d0',
+              border: '1px solid #d9cfba',
               borderRadius: 8,
               padding: '10px 14px',
               textAlign: 'left',
@@ -118,16 +118,16 @@ function EmptyPanelState() {
           >
             <div
               style={{
-                fontFamily: 'var(--font-mono)',
+                fontFamily: "'Geist Mono', monospace",
                 fontSize: 10,
                 fontWeight: 700,
-                color: 'var(--accent)',
+                color: '#d96b2e',
                 marginBottom: 3,
               }}
             >
               {p.label}
             </div>
-            <div style={{ fontSize: 10, color: 'var(--text-dim)' }}>{p.desc}</div>
+            <div style={{ fontSize: 10, color: '#8a8275' }}>{p.desc}</div>
           </div>
         ))}
       </div>
@@ -135,19 +135,19 @@ function EmptyPanelState() {
       <div>
         <div
           style={{
-            fontFamily: 'var(--font-mono)',
+            fontFamily: "'Geist Mono', monospace",
             fontSize: 13,
             fontWeight: 600,
-            color: 'var(--text-muted)',
+            color: '#8a8275',
             marginBottom: 6,
           }}
         >
           Interactive Panel
         </div>
         <div style={{ fontSize: 12, lineHeight: 1.5 }}>
-          Ask about duty cycles, polarity setup,
+          Ask for a fault code lookup, wiring reference,
           <br />
-          or troubleshooting to activate
+          or voltage calculator to activate
         </div>
       </div>
     </div>
@@ -177,14 +177,14 @@ export default function ArtifactPanel({ artifact, agentPhase, isPinned, onPin, o
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        background: 'var(--surface)',
+        background: '#f3ede1',
       }}
     >
       {/* Header */}
       <div
         style={{
           padding: '12px 20px',
-          borderBottom: '1px solid var(--border)',
+          borderBottom: '1px solid #d9cfba',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -194,10 +194,10 @@ export default function ArtifactPanel({ artifact, agentPhase, isPinned, onPin, o
       >
         <span
           style={{
-            fontFamily: 'var(--font-mono)',
+            fontFamily: "'Geist Mono', monospace",
             fontWeight: artifact ? 600 : 400,
             fontSize: 11,
-            color: artifact ? 'var(--accent)' : 'var(--text-muted)',
+            color: artifact ? '#b84d14' : '#8a8275',
             letterSpacing: '0.06em',
             textTransform: 'uppercase',
             transition: 'color 0.3s',
@@ -219,12 +219,12 @@ export default function ArtifactPanel({ artifact, agentPhase, isPinned, onPin, o
               title={isPinned ? 'Unpin — new responses will replace this' : 'Pin — keep this artifact while you keep chatting'}
               aria-label={isPinned ? 'Unpin artifact' : 'Pin artifact'}
               style={{
-                background: isPinned ? 'var(--accent-dim)' : 'none',
-                border: `1px solid ${isPinned ? 'var(--accent-border)' : 'var(--border-bright)'}`,
+                background: isPinned ? '#fbe9d9' : 'transparent',
+                border: `1px solid ${isPinned ? 'rgba(217,107,46,0.4)' : '#d9cfba'}`,
                 borderRadius: 4,
                 padding: '2px 8px',
-                color: isPinned ? 'var(--accent)' : 'var(--text-muted)',
-                fontFamily: 'var(--font-mono)',
+                color: isPinned ? '#d96b2e' : '#8a8275',
+                fontFamily: "'Geist Mono', monospace",
                 fontSize: 9,
                 fontWeight: 600,
                 letterSpacing: '0.06em',
@@ -245,12 +245,12 @@ export default function ArtifactPanel({ artifact, agentPhase, isPinned, onPin, o
           {artifact && (
             <span
               style={{
-                fontFamily: 'var(--font-mono)',
+                fontFamily: "'Geist Mono', monospace",
                 fontSize: 9,
-                color: isPinned ? 'var(--text-muted)' : 'var(--success)',
+                color: isPinned ? '#8a8275' : '#5c7a54',
                 letterSpacing: '0.06em',
                 textTransform: 'uppercase',
-                border: `1px solid ${isPinned ? 'var(--border)' : 'var(--success)'}`,
+                border: `1px solid ${isPinned ? '#d9cfba' : '#5c7a54'}`,
                 borderRadius: 4,
                 padding: '1px 6px',
                 opacity: 0.8,
