@@ -7,7 +7,7 @@
 
 ## Context
 
-When a user describes a fault ("welder won't arc", "overheating"), two approaches:
+When a user describes a fault ("compressor won't start", "short cycling"), two approaches:
 
 | Option | Approach |
 |--------|----------|

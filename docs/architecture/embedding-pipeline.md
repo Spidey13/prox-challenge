@@ -91,7 +91,7 @@ uv run python run_ingest.py
 # Or POST to the running dev server:
 curl -X POST http://localhost:8080/ingest \
   -H "Content-Type: application/json" \
-  -d '{"product_id": "vulcan_220", "fresh": true}'
+  -d '{"product_id": "trane_precedent", "fresh": true}'
 ```
 
 After ingestion, `migrate_embeddings.py` is run automatically to convert from 768-dim to 384-dim. The updated `chroma_db/` is then committed to the repo and rebuilt into the Docker image on the next deploy.

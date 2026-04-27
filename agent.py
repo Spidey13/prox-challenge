@@ -813,7 +813,7 @@ class SupportAgent:
             artifact_type,
             artifact_prompts.get("settings_configurator", list(artifact_prompts.values())[0]),
         )
-        prompt = template.format(context=context)
+        prompt = template.replace("{context}", context)
 
         html = self._call_sonnet(prompt, system=_HTML_SYSTEM_PROMPT)
         html = _wrap_html_fragment(html)

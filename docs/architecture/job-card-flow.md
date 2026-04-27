@@ -46,9 +46,9 @@ Steps stream progressively — the UI can render each step as it arrives. The `d
 {
   "type": "job_card",
   "metadata": {
-    "equipment": "Vulcan OmniPro 220",
+    "equipment": "Trane Precedent Rooftop Unit",
     "asset_id": "unknown",
-    "fault_description": "welder won't arc",
+    "fault_description": "compressor won't start",
     "priority": "HIGH"
   },
   "steps": [
@@ -112,4 +112,4 @@ Every step requires a `source_citation` field in the format `p.N §X.Y`. Steps m
 
 ## Cache key
 
-Fault button queries key on `"{product_id}:{fault_category}"` (e.g. `vulcan_220:wont_start`) — deterministic across sessions because the same fault on the same product always retrieves the same manual content. Text-path and photo-path queries key on the raw query string.
+Fault button queries key on `"{product_id}:{fault_category}"` (e.g. `trane_precedent:wont_start`) — deterministic across sessions because the same fault on the same product always retrieves the same manual content. Text-path and photo-path queries key on the raw query string.

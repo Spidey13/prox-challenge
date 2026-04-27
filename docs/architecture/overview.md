@@ -1,6 +1,6 @@
 # System Overview
 
-Diagnostiq is a multimodal technical support agent for the **Vulcan OmniPro 220** welder. It answers settings questions with interactive HTML artifacts, and turns fault descriptions into branching diagnostic job cards backed by the actual service manual.
+Diagnostiq is a multimodal technical support agent for the **Trane Precedent Rooftop Unit**. It answers settings questions with interactive HTML artifacts, and turns fault descriptions into branching diagnostic job cards backed by the actual service manual.
 
 Built directly on Anthropic's `tool_use` mechanism — no LangChain, no orchestration framework.
 

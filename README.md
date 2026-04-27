@@ -1,8 +1,8 @@
-# Prox — Vulcan OmniPro 220 Support Agent
+# Diagnostiq — Trane Precedent Support Agent
 
-![Vulcan OmniPro Agent Showcase](frontend/src/assets/hero.png)
+![Diagnostiq Agent Showcase](frontend/src/assets/hero.png)
 
-Technical support agent for the **Vulcan OmniPro 220** multiprocess welder. Runs Anthropic's `tool_use` loop with SSE streaming, interactive React artifacts, and a bundled vector DB — reviewers need only `ANTHROPIC_API_KEY`.
+Technical support agent for the **Trane Precedent Rooftop Unit**. Runs Anthropic's `tool_use` loop with SSE streaming, interactive React artifacts, and a bundled vector DB — reviewers need only `ANTHROPIC_API_KEY`.
 
 **Live demo:** [https://vulcan-agent-33492766578.us-central1.run.app](https://vulcan-agent-33492766578.us-central1.run.app)
 
@@ -59,14 +59,15 @@ PDF manuals (files/)
 | `search_knowledge` | Vector search over ingested manual chunks (ChromaDB + all-MiniLM-L6-v2) |
 | `get_manual_image` | Returns manual page PNGs with optional highlighted bounding boxes |
 | `render_artifact` | Calls Sonnet to generate self-contained interactive HTML |
+| `generate_job_card` | Calls Sonnet to produce a validated JSON diagnostic job card for fault queries |
 
 ---
 
 ## Quick start
 
 ```bash
-git clone https://github.com/Spidey13/prox-challenge
-cd prox-challenge
+git clone https://github.com/Spidey13/diagnostiq
+cd diagnostiq
 
 # Set your Anthropic key (only credential required)
 cp .env.example .env
@@ -87,7 +88,7 @@ cd frontend && npm install && npm run dev
 
 ## Image input
 
-`/ask` accepts `base64` image payloads alongside the text prompt. Upload a photo of a fault or weld bead, and Claude describes the issue and calls `search_knowledge` to locate the matching manual section.
+`/ask` accepts `base64` image payloads alongside the text prompt. Upload a photo of a fault or component, and Claude describes the issue and calls `search_knowledge` to locate the matching manual section.
 
 ---
 
@@ -96,8 +97,8 @@ cd frontend && npm install && npm run dev
 Single container — backend and frontend on port 8080.
 
 ```bash
-docker build -t vulcan-agent .
-docker run -p 8080:8080 -e ANTHROPIC_API_KEY=sk-ant-... vulcan-agent
+docker build -t diagnostiq .
+docker run -p 8080:8080 -e ANTHROPIC_API_KEY=sk-ant-... diagnostiq
 ```
 
 The Dockerfile uses a multi-stage build: Vite compiles the SPA in a Node container, `/dist` is copied to the Python 3.11 layer, and FastAPI serves it via `StaticFiles`. No separate Vercel deployment, no CORS config needed.

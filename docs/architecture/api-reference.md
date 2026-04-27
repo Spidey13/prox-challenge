@@ -100,7 +100,7 @@ Fetch the manual page image and optional artifact for a job card step. Used when
   "manual_image": {
     "page_number": 33,
     "doc_slug": "owner-manual",
-    "url": "/image/vulcan_220/owner-manual/33",
+    "url": "/image/trane_precedent/owner-manual/33",
     "highlight": {"x": 0.1, "y": 0.2, "w": 0.4, "h": 0.3, "label": "Terminal strip"} | null
   },
   "artifact_html": "<!DOCTYPE html>...</html>" | null
@@ -146,7 +146,7 @@ List all ingested documents for a product.
 
 ```json
 {
-  "product_id": "vulcan_220",
+  "product_id": "trane_precedent",
   "documents": [
     {"doc_slug": "owner-manual", "page_count": 56},
     {"doc_slug": "quick-start",  "page_count": 4}
