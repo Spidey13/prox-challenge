@@ -4,8 +4,6 @@
 
 Technical support agent for the **Trane Precedent Rooftop Unit**. Runs Anthropic's `tool_use` loop with SSE streaming, interactive React artifacts, and a bundled vector DB — reviewers need only `ANTHROPIC_API_KEY`.
 
-**Live demo:** [https://vulcan-agent-33492766578.us-central1.run.app](https://vulcan-agent-33492766578.us-central1.run.app)
-
 ---
 
 ## Design choices
