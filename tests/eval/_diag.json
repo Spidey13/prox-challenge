@@ -1,0 +1,831 @@
+[
+  {
+    "id": "led-2flash-diagnostic",
+    "exp_route": [
+      "job_card",
+      "artifact"
+    ],
+    "got_route": "artifact",
+    "exp_pages": [
+      32,
+      76
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        76,
+        "manual"
+      ],
+      [
+        76,
+        "manual"
+      ],
+      [
+        77,
+        "manual"
+      ],
+      [
+        77,
+        "manual"
+      ],
+      [
+        32,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "## What the 2-Flash Code Means\n\nThe RTRM green LED blinking **two \u00bc-second blinks every two seconds** (on RTRM V4.0 or higher) is a **diagnostic indicator light**, not a fault code itself. It tells you that **one or more system diagnostics is active**\u2014but you need to dig deeper t",
+    "faith": false,
+    "faith_reason": "FAIL \u2014 The answer claims \"Use a DC voltmeter at RTRM J6 (diagnostic terminals)\" and references \"the diagnostic chart on the following pages\" but the retrieved context does not describe J6 terminals, v"
+  },
+  {
+    "id": "compressor-no-start-no-diag",
+    "exp_route": "job_card",
+    "got_route": "job_card",
+    "exp_pages": [
+      34,
+      35,
+      36
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        79,
+        "manual"
+      ],
+      [
+        36,
+        "manual"
+      ],
+      [
+        36,
+        "manual"
+      ],
+      [
+        34,
+        "manual"
+      ],
+      [
+        8,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        79,
+        "manual"
+      ],
+      [
+        156,
+        "manual"
+      ],
+      [
+        157,
+        "manual"
+      ],
+      [
+        157,
+        "manual"
+      ],
+      [
+        8,
+        "rt-svx075a-en-12022022"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer correctly identifies diagnostic terminals (3J1-8, 3J3-2, 3J1-9, 3J3-3) and voltage checks (24VAC, 1.5\u20132.5VDC pulsing) from the context, accurately describes the Compressor Disable In"
+  },
+  {
+    "id": "fan-proving-40s",
+    "exp_route": "job_card",
+    "got_route": "job_card",
+    "exp_pages": [
+      33,
+      36
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        77,
+        "manual"
+      ],
+      [
+        77,
+        "manual"
+      ],
+      [
+        48,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        40,
+        "manual"
+      ],
+      [
+        119,
+        "manual"
+      ]
+    ],
+    "recall": 0.0,
+    "answer": "",
+    "faith": false,
+    "faith_reason": "FAIL \u2014 The answer conflates two different fan proving switch types (3-25 tons vs. 27.5-50 tons) with different setpoints (0.07\" vs. 0.15\") and tells the technician to verify both, when the context cle"
+  },
+  {
+    "id": "gas-heat-fail-ignition",
+    "exp_route": "job_card",
+    "got_route": "job_card",
+    "exp_pages": [
+      35,
+      118,
+      119
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        34,
+        "manual"
+      ],
+      [
+        35,
+        "manual"
+      ],
+      [
+        35,
+        "manual"
+      ],
+      [
+        79,
+        "manual"
+      ],
+      [
+        35,
+        "manual"
+      ],
+      [
+        48,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        164,
+        "manual"
+      ],
+      [
+        164,
+        "manual"
+      ],
+      [
+        118,
+        "manual"
+      ],
+      [
+        118,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "",
+    "faith": false,
+    "faith_reason": "FAIL \u2014 The answer cites \"p.87\" multiple times, but the retrieved context shows ignition module diagnostics on pages 48-49 and 118-119 of different manuals. More critically, the answer invokes specific"
+  },
+  {
+    "id": "short-cycle-pressure",
+    "exp_route": "job_card",
+    "got_route": "job_card",
+    "exp_pages": [
+      36,
+      157
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        35,
+        "manual"
+      ],
+      [
+        166,
+        "manual"
+      ],
+      [
+        34,
+        "manual"
+      ],
+      [
+        79,
+        "manual"
+      ],
+      [
+        36,
+        "manual"
+      ]
+    ],
+    "recall": 0.5,
+    "answer": "",
+    "faith": true,
+    "faith_reason": "PASS \u2014 All specific terminal references (RTRM J1-8, J3-2, 3J1-9, 3J3-3), voltage values (24 VAC), page numbers (37, 80), and diagnostic logic (LPC open during 3-minute minimum on time over 4 consecuti"
+  },
+  {
+    "id": "economizer-fault-mat",
+    "exp_route": "job_card",
+    "got_route": "text",
+    "exp_pages": [
+      54,
+      125
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        57,
+        "manual"
+      ],
+      [
+        54,
+        "manual"
+      ],
+      [
+        54,
+        "manual"
+      ],
+      [
+        128,
+        "manual"
+      ],
+      [
+        133,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Based on the search results, I can help you diagnose the economizer module. Here's a systematic approach:\n\n## Economizer Fault Diagnosis\n\n**First, check the LED flash codes on the ECA (Economizer Control Actuator):**\nAccording to the manual (Page 54-55), the ECA has specific LED ",
+    "faith": false,
+    "faith_reason": "FAIL \u2014 The answer invents specific voltage values (3.634 VDC at 50\u00b0F) and resistance values (6.073 k\u03a9) from Table 96 as diagnostic targets, when the context only provides a reference table for technic"
+  },
+  {
+    "id": "clogged-filter-maint",
+    "exp_route": "job_card",
+    "got_route": "text",
+    "exp_pages": [
+      33,
+      10
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        8,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        33,
+        "manual"
+      ],
+      [
+        33,
+        "manual"
+      ],
+      [
+        3,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        0,
+        "rt-svu03l-en-01132017"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Based on the manual, here's what the clogged filter indication means and what you should check:\n\n## What It Means\n\nThe **clogged filter indication means the pressure differential across the filters has reached a threshold indicating restricted airflow.** Specifically:\n\n- **Standa",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer accurately reflects the context: correctly states the 0.4 inch w.c. threshold for standard filters and 0.8/0.7 inch w.c. for MERV 13 filters, correctly notes the 2-minute delay requi"
+  },
+  {
+    "id": "frostat-freeze-up",
+    "exp_route": "job_card",
+    "got_route": "job_card",
+    "exp_pages": [
+      32,
+      35
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        48,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        53,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        45,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        124,
+        "manual"
+      ],
+      [
+        123,
+        "manual"
+      ],
+      [
+        10,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        10,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        124,
+        "manual"
+      ],
+      [
+        63,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        63,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        48,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        124,
+        "manual"
+      ],
+      [
+        53,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        35,
+        "manual"
+      ],
+      [
+        35,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "",
+    "faith": false,
+    "faith_reason": "FAIL \u2014 The answer claims \"Check if the Frostat input is active by reading DC volts at RTRM J6 service terminals\" and references p.36, but the context shows J6 terminals are for HEAT/COOL/COMMON, not a"
+  },
+  {
+    "id": "voltage-readings-lookup",
+    "exp_route": "artifact",
+    "got_route": "text",
+    "exp_pages": [
+      33
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        33,
+        "manual"
+      ],
+      [
+        79,
+        "manual"
+      ],
+      [
+        34,
+        "manual"
+      ],
+      [
+        79,
+        "manual"
+      ],
+      [
+        79,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Based on the manual, here are the approximate DC voltage readings at the RTRM J6 service test points:\n\n**ON State:**\nThe manual does not specify an exact voltage for the ON state. It indicates that when the system is powered up and the green RTRM System LED is on, the output shou",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer correctly identifies that the manual does not specify an exact voltage for the ON state, accurately cites 0 VDC for OFF, and correctly references the 1.5\u20132.5 VDC pulsing range with p"
+  },
+  {
+    "id": "led-code-reference",
+    "exp_route": "artifact",
+    "got_route": "artifact",
+    "exp_pages": [
+      76,
+      32
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        76,
+        "manual"
+      ],
+      [
+        76,
+        "manual"
+      ],
+      [
+        76,
+        "manual"
+      ],
+      [
+        32,
+        "manual"
+      ],
+      [
+        32,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "I've generated an interactive reference showing the **RTRM LED flash codes and their meanings** (from **page 77** of the manual).\n\nHere's what the RTRM LEDs tell you:\n\n**Green System LED (Normal Operation States):**\n- **On (steady)** = Normal operation (slight flickering is norma",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer correctly references page 77 and accurately presents the RTRM LED flash codes and their meanings as stated in the context. The 2-flash diagnostic pattern is correctly noted as mappin"
+  },
+  {
+    "id": "economizer-wiring",
+    "exp_route": "artifact",
+    "got_route": "text",
+    "exp_pages": [
+      16,
+      17
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        125,
+        "manual"
+      ],
+      [
+        125,
+        "manual"
+      ],
+      [
+        131,
+        "manual"
+      ],
+      [
+        131,
+        "manual"
+      ],
+      [
+        163,
+        "manual"
+      ]
+    ],
+    "recall": 0.0,
+    "answer": "Perfect. Here's the economizer module wiring diagram and RTRM connections for the Trane Precedent:\n\n## Economizer Control Architecture\n\nThe **ECA (Economizer Actuator)** module plugs directly onto the economizer actuator and communicates via **MODBUS** with the **RTRM** (ReliaTel",
+    "faith": null,
+    "faith_reason": ""
+  },
+  {
+    "id": "rtrm-j6-terminals",
+    "exp_route": "artifact",
+    "got_route": "artifact",
+    "exp_pages": [
+      34,
+      35
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        103,
+        "manual"
+      ],
+      [
+        103,
+        "manual"
+      ],
+      [
+        165,
+        "manual"
+      ],
+      [
+        165,
+        "manual"
+      ],
+      [
+        36,
+        "manual"
+      ]
+    ],
+    "recall": 0.0,
+    "answer": "The RTRM J6 terminal block (page 104) contains **11 active terminals** that control thermostat, setpoint, and sensor inputs. Here's what each terminal does:\n\n**Primary Control Inputs:**\n- **Terminal 1 (Zone Temperature)** \u2014 Receives the actual space temperature signal from the th",
+    "faith": false,
+    "faith_reason": "FAIL \u2014 The answer claims \"Terminal 11 (24 VAC)\" is a separate terminal, but the context shows J6 has only 11 terminals total (numbered 1\u201311), with terminal 11 being \"24 VAC\" itself. More critically, t"
+  },
+  {
+    "id": "what-is-reliatel",
+    "exp_route": "text",
+    "got_route": "text",
+    "exp_pages": [
+      9
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        9,
+        "manual"
+      ],
+      [
+        11,
+        "manual"
+      ],
+      [
+        9,
+        "manual"
+      ],
+      [
+        9,
+        "manual"
+      ],
+      [
+        9,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Based on the manual, **ReliaTel** is not a single circuit board, but rather **an overall communicating control system consisting of up to eight communicating modules**. It is the second generation of microprocessor controls developed by Trane.\n\nKey characteristics:\n\n- **First int",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer accurately describes ReliaTel as a communicating control system consisting of up to eight modules, identifies it as second-generation Trane microprocessor controls, correctly names t"
+  },
+  {
+    "id": "loto-before-service",
+    "exp_route": "text",
+    "got_route": "text",
+    "exp_pages": [],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        50,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        50,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        11,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        46,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        46,
+        "rt-svx075a-en-12022022"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Based on the Precedent manual, here are the critical electrical safety steps you **must** take before beginning work on this rooftop unit:\n\n## Primary Lockout/Tagout Steps:\n\n1. **Turn the unit OFF** and **lock the main power disconnect switch in the OPEN position** before beginni",
+    "faith": true,
+    "faith_reason": "PASS \u2014 All safety steps cited are directly supported by the retrieved context, including lockout/tagout, capacitor discharge, voltmeter verification, and the requirement for qualified personnel on liv"
+  },
+  {
+    "id": "enter-test-mode",
+    "exp_route": "text",
+    "got_route": "text",
+    "exp_pages": [
+      78,
+      79
+    ],
+    "exp_slug": "manual",
+    "got_pages": [
+      [
+        78,
+        "manual"
+      ],
+      [
+        78,
+        "manual"
+      ],
+      [
+        11,
+        "manual"
+      ],
+      [
+        5,
+        "manual"
+      ],
+      [
+        79,
+        "manual"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Perfect! I found the detailed information. Here's how to put the Trane Precedent unit into ReliaTel Test Mode:\n\n## ReliaTel Test Mode Entry Methods\n\nThere are **three ways** to enter Service Test Mode. The unit can be activated at any time when powered, provided an open condition",
+    "faith": false,
+    "faith_reason": "FAIL \u2014 The retrieved context explicitly states \"Test Mode is activated using either a fixed resistance or a jumper as explained below\" but then cuts off mid-sentence. The context does NOT provide the "
+  },
+  {
+    "id": "ambiguous-not-working",
+    "exp_route": "clarify",
+    "got_route": "clarify",
+    "exp_pages": [],
+    "exp_slug": "manual",
+    "got_pages": [],
+    "recall": 1.0,
+    "answer": "I need a bit more detail to help you effectively. Can you tell me:\n\n**What exactly is happening (or not happening)?**\n- Is the unit not turning on at all?\n- Is it running but not cooling or heating?\n- Is it cycling on and off repeatedly?\n- Are there any LED flash codes or error m",
+    "faith": null,
+    "faith_reason": ""
+  },
+  {
+    "id": "out-of-scope-other-product",
+    "exp_route": [
+      "text",
+      "refuse"
+    ],
+    "got_route": "refuse",
+    "exp_pages": [],
+    "exp_slug": "manual",
+    "got_pages": [],
+    "recall": 1.0,
+    "answer": "I appreciate the question, but I need to clarify: I'm the technical support expert specifically for **Trane Precedent** rooftop units (3-10 tons, 60Hz, with ReliaTel controls). \n\nThe **Carrier 48TC** is a different manufacturer's product, and I don't have access to Carrier docume",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The assistant correctly acknowledges the question is outside its scope, declines to provide unsupported information about a non-Trane product, and directs the user to appropriate resources (nam"
+  },
+  {
+    "id": "maintenance-monthly",
+    "exp_route": "text",
+    "got_route": "text",
+    "exp_pages": [
+      50,
+      51
+    ],
+    "exp_slug": "rt-svx075a-en-12022022",
+    "got_pages": [
+      [
+        65,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        65,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        50,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        0,
+        "rt-svu03l-en-01132017"
+      ],
+      [
+        4,
+        "rt-svx075a-en-12022022"
+      ]
+    ],
+    "recall": 0.5,
+    "answer": "Based on the manual, here are the **monthly maintenance tasks** you should perform on the Trane Precedent rooftop unit:\n\n## Filters\n- Inspect the air filters at least once each month when the system is in constant operation\n- For new installations, check filters every week for th",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer accurately reflects the monthly maintenance tasks from the retrieved context, including filter inspection, condensate system checks, cooling season tasks (coil inspection, fan rotati"
+  },
+  {
+    "id": "refrigerant-charge-superheat",
+    "exp_route": "text",
+    "got_route": "text",
+    "exp_pages": [
+      49,
+      50
+    ],
+    "exp_slug": "rt-svx075a-en-12022022",
+    "got_pages": [
+      [
+        49,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        49,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        16,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        16,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        5,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        49,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        49,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        57,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        57,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        19,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        123,
+        "manual"
+      ],
+      [
+        123,
+        "manual"
+      ],
+      [
+        43,
+        "manual"
+      ],
+      [
+        43,
+        "manual"
+      ],
+      [
+        148,
+        "manual"
+      ]
+    ],
+    "recall": 0.5,
+    "answer": "Based on the manual, here's how to verify refrigerant charge on the Trane Precedent using the superheat method:\n\n## Superheat Verification Procedure\n\n**Step-by-step process (from page 49-50):**\n\n1. **Run the unit in cooling** \u2014 Let the unit operate for approximately **30 minutes*",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer correctly cites the manual's superheat procedure (30-minute run, compare to access panel label, follow Service Facts superheat curve, \u00b15\u00b0F tolerance, repeat per circuit) and appropri"
+  },
+  {
+    "id": "electrical-mca-lookup",
+    "exp_route": "artifact",
+    "got_route": "text",
+    "exp_pages": [
+      82
+    ],
+    "exp_slug": "rt-prc107b-en-07152023",
+    "got_pages": [
+      [
+        82,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        82,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        6,
+        "manual"
+      ],
+      [
+        55,
+        "rt-svx075a-en-12022022"
+      ],
+      [
+        55,
+        "rt-svx075a-en-12022022"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Based on **Table 51: Unit wiring** from page 82-83 of the Trane Precedent manual, for the **10-ton gas/electric model** at **208/230V** (voltage range 414-506, which corresponds to the A4 designation):\n\n**Model: YHJ120A4**\n- **MCA: 29 amps** (standard indoor fan motor configurati",
+    "faith": true,
+    "faith_reason": "PASS \u2014 The answer correctly cites Table 51 from the retrieved context and accurately extracts the MCA (29 amps) and maximum fuse size (40 amps) for the 10-ton model YHJ120A4 at 208/230V (414-506V rang"
+  },
+  {
+    "id": "cooling-capacity-lookup",
+    "exp_route": "text",
+    "got_route": "text",
+    "exp_pages": [
+      18
+    ],
+    "exp_slug": "rt-prc107b-en-07152023",
+    "got_pages": [
+      [
+        21,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        21,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        18,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        18,
+        "rt-prc107b-en-07152023"
+      ],
+      [
+        73,
+        "rt-prc107b-en-07152023"
+      ]
+    ],
+    "recall": 1.0,
+    "answer": "Based on Table 3 (General data\u20146 to 12.5 tons, high efficiency) on page 19 of the manual, for the **10-ton gas/electric high-efficiency model (YHJ120)**:\n\n- **Gross Cooling Capacity:** 123,000 BTU/h\n- **EER:** 11.4\n\nThe unit operates at 10.53 kW of system power and delivers 120,0",
+    "faith": true,
+    "faith_reason": "PASS \u2014 All specific values (123,000 BTU/h gross cooling capacity and 11.4 EER for the 10-ton YHJ120 model) are directly supported by Table 3 on page 19 of the retrieved context."
+  }
+]

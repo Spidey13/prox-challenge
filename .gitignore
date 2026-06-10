@@ -20,6 +20,9 @@ env/
 !package-lock.json
 !tsconfig.json
 !products.json
+# Eval golden set + calibration evidence are data, not secrets
+!tests/eval/*.json
+!tests/eval/*.jsonl
 
 # Vertex / GCP credentials
 service-account.json
