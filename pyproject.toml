@@ -1,7 +1,7 @@
 [project]
-name = "prox-challenge"
+name = "diagnostiq"
 version = "0.1.0"
-description = "Add your description here"
+description = "Diagnostiq — multimodal technical-support agent for the Trane Precedent RTU"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
