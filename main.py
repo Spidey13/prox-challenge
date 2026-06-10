@@ -107,6 +107,9 @@ async def ingest(req: IngestRequest) -> dict:
     """
     loop = asyncio.get_event_loop()
 
+    # Corpus is about to change — cached answers cite the old content.
+    _cache.clear()
+
     if req.pdf_path:
         # Single-PDF mode (backward-compatible)
         ingester = Ingester(product_id=req.product_id, pdf_path=req.pdf_path)
@@ -211,12 +214,10 @@ async def ask(req: AskRequest) -> EventSourceResponse:
 
             answer_accumulated = ""
             while True:
-                # Poll the queue; yield control to the event loop between polls.
-                try:
-                    item = q.get_nowait()
-                except _queue.Empty:
-                    await asyncio.sleep(0.01)
-                    continue
+                # Block on the queue in a worker thread — no busy-poll, events
+                # propagate the moment the generator produces them. (Each active
+                # stream briefly occupies a second executor thread while waiting.)
+                item = await asyncio.to_thread(q.get)
 
                 if item is _SENTINEL:
                     break

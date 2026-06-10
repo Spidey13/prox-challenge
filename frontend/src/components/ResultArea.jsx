@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import ArtifactPanel from './ArtifactPanel'
 
 marked.setOptions({ breaks: true, gfm: true })
@@ -50,7 +51,12 @@ function ThinkingDots() {
 }
 
 function MarkdownText({ content }) {
-  const html = useMemo(() => content ? marked.parse(content) : '', [content])
+  // LLM output rendered in-origin — sanitize so a stray <script>/<img onerror>
+  // in model output can't execute (artifact iframes are sandboxed separately).
+  const html = useMemo(
+    () => content ? DOMPurify.sanitize(marked.parse(content)) : '',
+    [content]
+  )
   if (!html) return null
   return (
     <div
