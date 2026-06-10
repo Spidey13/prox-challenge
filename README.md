@@ -84,6 +84,32 @@ cd frontend && npm install && npm run dev
 
 ---
 
+## Evaluation
+
+The agent is gated by a 21-case eval suite (`tests/eval/`) scoring **retrieval
+recall**, **output routing**, structural checks, and **faithfulness** via a
+pinned LLM judge (Haiku, temperature 0). Ground truth is verified against the
+source PDFs, not assumed.
+
+The first calibrated run caught the agent **inventing voltage values the manual
+contradicts — while holding the correct page in context**. Grounding rules in
+both generation prompts plus a retrieval config fix produced:
+
+| 2026-06-09 | Recall | Route | Faithfulness |
+|---|---|---|---|
+| Baseline | 0.79 | 0.71 | 0.26 |
+| After fixes | 0.79 | 0.76 | **0.63** |
+
+CI thresholds sit just under the current baseline (regression gate, ratcheted as
+the agent improves); every full run appends to `tests/eval/history.jsonl` with
+its git SHA. Details: [tests/eval/README.md](tests/eval/README.md).
+
+```bash
+uv run python -m pytest tests/eval -v        # needs ANTHROPIC_API_KEY; ≈$1/run
+```
+
+---
+
 ## Image input
 
 `/ask` accepts `base64` image payloads alongside the text prompt. Upload a photo of a fault or component, and Claude describes the issue and calls `search_knowledge` to locate the matching manual section.

@@ -79,7 +79,10 @@ TOOL RULES — follow strictly:
      "what is the setting for", "layout", "table", "reference", "LED code", \
      "flash code", "fault code lookup". \
      → call render_artifact with the appropriate artifact_type from: {artifact_types}. \
-     Do NOT answer wiring/LED code/terminal queries in plain text — always use render_artifact.
+     Do NOT answer wiring/LED code/terminal queries in plain text — always use render_artifact. \
+     MANDATORY: if the query asks about terminal connections, wiring, voltage \
+     readings/test points, flash codes, or any reference table, you MUST call \
+     render_artifact — replying to such a query in plain text is an error.
    PLAIN KNOWLEDGE — factual lookup with no fault and no visual needed. \
      → call get_manual_image only if the user asks for something visual, \
      then answer in plain text.
@@ -87,9 +90,15 @@ TOOL RULES — follow strictly:
    When in doubt between fault and knowledge, prefer generate_job_card.
 3. For truly ambiguous questions with no symptom ("it's not working" alone), \
    ask ONE clarifying question in plain text without calling any tools.
-4. Never invent specifications. If search_knowledge returns nothing \
-   useful, say "I don't see that in the manual" and cite the closest \
-   page found.
+4. GROUNDING — every specific value you state (a voltage, terminal or pin \
+   number, flash/fault code, pressure, temperature, time interval, page or \
+   table number) MUST appear in the search_knowledge results of THIS turn. \
+   Quote table values exactly with their page, and when a table has multiple \
+   columns (e.g. one per control type), name which column the value comes \
+   from. If a value is NOT in the results, never supply it from memory — \
+   instead say which page or companion document contains it. \
+   If search_knowledge returns nothing useful, say "I don't see that in the \
+   manual" and cite the closest page found.
 5. get_manual_image is ONLY for visual/layout questions. Never call it \
    for fault diagnosis — generate_job_card handles those entirely.
 
@@ -418,7 +427,13 @@ class SupportAgent:
           ("token",          str)  — a text delta from the streaming response
           ("job_card_start", dict) — job card metadata envelope: {metadata: {...}}
           ("job_card_step",  dict) — one step object from the job card
-          ("done",           dict) — final: {suggestions, artifact, job_card, images}
+          ("done",           dict) — final: {answer, suggestions, artifact,
+                                     job_card, images, retrieval_trace}
+
+        ``retrieval_trace`` is the accumulated list of chunks returned by every
+        ``search_knowledge`` call this turn (each a dict with text, chunk_type,
+        page_number, doc_slug, section). It is consumed by the eval harness to
+        grade retrieval; ``main.py`` does not forward it over SSE.
 
         Pattern:
           1. Run the while-loop synchronously — tool calls must complete before
@@ -471,6 +486,7 @@ class SupportAgent:
         images: list[dict] = []
         artifact: dict | None = None
         job_card: dict | None = None
+        retrieval_trace: list[dict] = []  # chunks from every search_knowledge call
 
         # ----- intent_known fast path: skip Haiku entirely, 1 API call total -----
         if intent_known and fault_category:
@@ -478,6 +494,7 @@ class SupportAgent:
             _results = self._tool_search_knowledge(
                 query=_sq, product_id=product_id
             )[:3]
+            retrieval_trace.extend(_results)
             _ctx = "\n".join(r.get("text", "") for r in _results)
             job_card = self._tool_generate_job_card(
                 fault_description=_sq,
@@ -494,6 +511,7 @@ class SupportAgent:
                 "artifact": None,
                 "job_card": job_card,
                 "images": [],
+                "retrieval_trace": retrieval_trace,
             })
             return
 
@@ -533,6 +551,7 @@ class SupportAgent:
                             query=tool_input.get("query", query),
                             product_id=tool_input.get("product_id", product_id),
                         )
+                        retrieval_trace.extend(raw_result)
                     elif tool_name == "get_manual_image":
                         raw_result = self._tool_get_manual_image(
                             product_id=tool_input.get("product_id", product_id),
@@ -601,6 +620,7 @@ class SupportAgent:
                 "artifact": None,
                 "job_card": job_card,
                 "images": images,
+                "retrieval_trace": retrieval_trace,
             })
             return
 
@@ -661,6 +681,7 @@ class SupportAgent:
             "artifact": artifact,
             "job_card": None,
             "images": images,
+            "retrieval_trace": retrieval_trace,
         })
 
     # ------------------------------------------------------------------
@@ -720,7 +741,10 @@ class SupportAgent:
                         {"product_id": {"$eq": product_id}},
                         {"chunk_type": {"$eq": chunk_type}},
                     ]},
-                    n_results=3,
+                    # top_k (not 3): the local-ingest corpus is single-type
+                    # ("text"), so one type must be able to fill the budget;
+                    # multi-type corpora still cap at top_k via the early return.
+                    n_results=top_k,
                     include=["documents", "metadatas", "distances"],
                 )
             except Exception as exc:
@@ -872,7 +896,13 @@ class SupportAgent:
             "3. priority: CRITICAL=immediate safety risk, HIGH=operational failure, "
             "MEDIUM=degraded performance, LOW=advisory.\n"
             "4. yes_next / no_next: integer step id, or the string 'escalate', "
-            "or the string 'complete'.\n\n"
+            "or the string 'complete'.\n"
+            "5. FAITHFULNESS: every terminal, pin, voltage, code, or numeric value "
+            "in an instruction or note MUST appear in the Retrieved content below — "
+            "do not add specifics from general HVAC knowledge. If the retrieved "
+            "content lacks the value a step needs, the step must direct the tech to "
+            "the source (e.g. 'check the charging table in Service Facts') instead "
+            "of stating a number.\n\n"
             f"Fault: {fault_description}\n\n"
             "Retrieved content:\n"
             f"{context}"
